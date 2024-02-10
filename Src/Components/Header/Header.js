@@ -6,7 +6,7 @@ import Colors from '../../Constants/Colors'
 
 export default function Header() {
   return (
-    <View style={{flex: 1,backgroundColor:Colors.pageBackgroundColor,}}>
+    <>
       <StatusBar
         backgroundColor={Colors.topBottomBarcolor}
         barStyle="light-content"
@@ -17,6 +17,6 @@ export default function Header() {
           </View> */}
       </View>
         
-    </View>
+    </>
   )
 }
