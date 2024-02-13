@@ -5,4 +5,6 @@ export default{
     textcolor:'#155638',
     tabBarInActiveColor:'#808080',
     tabBarActiveColor:'#FFFAFA',
+    whitetextcolor:'#FFff',
+    popupbackgroundcolor:'#FFF'
 }

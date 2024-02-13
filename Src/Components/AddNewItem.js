@@ -10,7 +10,8 @@ const { width } = Dimensions.get("window");
 
 const AddNewItem = ({ isShowCustomComponent }) => {
     const [isModalVisible, setModalVisible] = useState(true);
-    const [inputValue, setInputValue] = useState("");
+    const [inputDetail, setinputDetail] = useState("");
+    const [inputPrice, setinputPrice]=useState("");
 
     const toggleModalVisibility = () => {
         setModalVisible(!isModalVisible),
@@ -19,27 +20,27 @@ const AddNewItem = ({ isShowCustomComponent }) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <Modal animationType="slide"
+            <Modal 
+                animationType="slide"
                 transparent visible={isModalVisible}
                 presentationStyle="overFullScreen"
                 onDismiss={toggleModalVisibility}>
                 <View style={styles.viewWrapper}>
                     <View style={styles.modalView}>
                         <>
-
                             <Text style={styles.headerText}>ADD NEW ITEM</Text>
-                            <View style={{marginVertical:8}}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12,marginVertical:2 }}>
-                                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: Colors.textcolor, width:60 }}>Detail:</Text>
+                            <View style={{ marginVertical: 8 }}>
+                                <View style={[styles.dataView,{  marginVertical: 2 }]}>
+                                    <Text style={styles.titileText}>Detail:</Text>
                                     <TextInput placeholder="Enter Detail...."
-                                        value={inputValue} style={styles.textInput}
-                                        onChangeText={(value) => setInputValue(value)} />
+                                        value={inputDetail} style={styles.textInput}
+                                        onChangeText={(value) => setinputDetail(value)} />
                                 </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 }}>
-                                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: Colors.textcolor, width:60}}>Price:</Text>
+                                <View style={styles.dataView}>
+                                    <Text style={styles.titileText}>Price:</Text>
                                     <TextInput placeholder="Enter Price...."
-                                        value={inputValue} style={styles.textInput}
-                                        onChangeText={(value) => setInputValue(value)} />
+                                        value={inputPrice} style={styles.textInput}
+                                        onChangeText={(value) => setinputPrice(value)} />
                                 </View>
                             </View>
                         </>
@@ -59,10 +60,10 @@ const AddNewItem = ({ isShowCustomComponent }) => {
 // These are user defined styles 
 const styles = StyleSheet.create({
     screen: {
-        flex: 1,
+       flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#fff",
+        backgroundColor: Colors.popupbackgroundcolor
     },
     viewWrapper: {
         flex: 1,
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
         { translateY: -90 }],
         height: 205,
         width: width * 0.8,
-        backgroundColor: "#fff",
+        backgroundColor: Colors.popupbackgroundcolor,
         borderRadius: 7,
         paddingTop: 10,
     },
@@ -121,5 +122,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold'
     },
+    dataView:{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 },
+    titileText:{ fontSize: 15, fontWeight: 'bold', color: Colors.textcolor, width: 60 }
 });
 export default AddNewItem;

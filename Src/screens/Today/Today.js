@@ -13,30 +13,37 @@ export default function Today() {
   }
 
   return (
+    
+    
     <View style={styles.mainView}>
-      <Header></Header>
-      <View style={styles.subView}>
-        {
+      <Header page={'Today'}></Header>
+      <View style={{flex:1,position:'absolute',zIndex:2}}>
+      {
           showCustomComponent && (
             <AddNewItem isShowCustomComponent={handleButtonPress}/>) 
         }
-        <TouchableOpacity style={styles.touchableOpacity} onPress={()=>handleButtonPress(!showCustomComponent)}>
+      </View>
+      <View style={styles.subView}>
+        <TouchableOpacity style={styles.touchableOpacity} onPress={()=>handleButtonPress(!showCustomComponent)} activeOpacity={1}>
           <View>
             <AntDesign name="plus" size={25} color={Colors.buttonColor} />
           </View>
         </TouchableOpacity>
       </View>
     </View>
+   
+    
   )
 }
 const styles = StyleSheet.create({
   mainView:
   {
-    flex: 1, backgroundColor: Colors.pageBackgroundColor
+    flex: 1, backgroundColor: Colors.pageBackgroundColor,zIndex:1
   },
   subView:
   {
-     flex: 1, position: 'absolute', right: 8, bottom: 8 
+     flex: 1, position: 'absolute', right: 8, bottom: 8
+    
   },
   touchableOpacity:{
     borderWidth: 0,

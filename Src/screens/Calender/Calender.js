@@ -6,7 +6,7 @@ import Colors from '../../Constants/Colors'
 export default function Calender() {
   return (
     <View style={{flex:1,backgroundColor:Colors.pageBackgroundColor}}>
-      <Header></Header>
+      <Header page={'Calendar'}></Header>
     </View>
       
   )

@@ -19,6 +19,7 @@ function navigationContainer() {
       <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarStyle: {backgroundColor: Colors.topBottomBarcolor,borderTopWidth:0},
+            tabBarHideOnKeyboard:true,
             tabBarIcon: ({ focused, color, size }) => {
               let iconName;
   
