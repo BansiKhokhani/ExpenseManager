@@ -3,7 +3,7 @@ import {
     Button, SafeAreaView, StyleSheet, Modal,
     View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity
 } from 'react-native'
-import Colors from '../Constants/Colors';
+import Colors from '../../Constants/Colors';
 
 const { width } = Dimensions.get("window");
 
