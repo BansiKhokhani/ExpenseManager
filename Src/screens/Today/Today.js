@@ -1,63 +1,60 @@
 import React, { useState } from 'react'
-import { View, Text, Button, Alert, TouchableOpacity, StyleSheet } from 'react-native';
+import { View,TouchableOpacity, StyleSheet,FlatList } from 'react-native';
 import Header from '../../Components/Header/Header';
 import AddNewItem from '../../Components/AddNewItems/AddNewItem';
 import Colors from '../../Constants/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import ProductComponent from '../../Components/ProductComponent/ProductComponent';
+import { dayOfWeek ,date,monthOfYear,year, } from '../../Components/Helper';
+import { TODAY } from '../../Components/constants';
 
 export default function Today() {
   const [showCustomComponent, setShowCustomComponent] = useState(false);
+  const [data,setData]=useState([]);
 
-  
- 
-  const CurrentDateAndTime=()=>{
-    const currentDate = new Date();
-    // Get the current date, month, and year
-    const date = currentDate.getDate(); // Get the day of the month (1-31)
-    const month = currentDate.getMonth() + 1; // Get the month (0-11). Adding 1 because months are zero-indexed
-    const year = currentDate.getFullYear(); // Get the four-digit yea
-    const day=currentDate.getDay();
-    const dayOfWeekNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dayOfWeek = dayOfWeekNames[day];
-
-    return {date:date,month:month,year:year,day:dayOfWeek}
-  }
-
-
+  // Used to call this function AddButtonComponentButton pressed by user
   const handleButtonPress = (value) => {
     setShowCustomComponent(value)
   }
+  const handleChildData=(value)=>{
+     setData([...data,{inputDetail:value.inputDetail,inputPrice:(parseFloat(value.inputPrice)).toFixed(2)}]);
+    
+  }
+  const renderItem=({item})=>(
+    console.log(item),
+    <ProductComponent data={item}/>
+  )
 
   return (
     <View style={styles.mainView}>
-      <Header page={'Today'} data={{ year: 2024, month: 'january' }}></Header>
-      <View style={{ flex: 1, position: 'absolute', zIndex: 2 }}>
+      <Header page={TODAY} data={{date: date, month: monthOfYear, year: year, day: dayOfWeek }}></Header>
+      <View style={{ flex: 1 }}>
         {
           showCustomComponent && (
-            <AddNewItem isShowCustomComponent={handleButtonPress} />)
+            <AddNewItem isShowCustomComponent={handleButtonPress} onData={handleChildData}/>
+          )
         }
-      </View>
-      <View style={styles.subView}>
-        <TouchableOpacity style={styles.touchableOpacity} onPress={() => handleButtonPress(!showCustomComponent)} activeOpacity={1}>
-          <View>
-            <AntDesign name="plus" size={25} color={Colors.buttonColor} />
-          </View>
-        </TouchableOpacity>
+        <FlatList showsVerticalScrollIndicator={false} data={data} renderItem={renderItem} style={{ flex: 1, marginTop: 5 }}></FlatList>
+       
+        <View style={styles.subView}>
+          <TouchableOpacity style={styles.touchableOpacity} onPress={() => handleButtonPress(!showCustomComponent)} activeOpacity={1}>
+            <View>
+              <AntDesign name="plus" size={25} color={Colors.buttonColor} />
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
-
-
   )
 }
 const styles = StyleSheet.create({
   mainView:
   {
-    flex: 1, backgroundColor: Colors.pageBackgroundColor, zIndex: 1
+    flex: 1, backgroundColor: Colors.pageBackgroundColor
   },
   subView:
   {
     flex: 1, position: 'absolute', right: 8, bottom: 8
-
   },
   touchableOpacity: {
     borderWidth: 0,

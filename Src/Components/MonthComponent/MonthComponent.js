@@ -4,8 +4,6 @@ import Colors from '../../Constants/Colors';
 import DaysComponent from '../DaysComponent/DaysComponent';
 
 const MonthComponent = ({ monthName, amount }) => {
-
-
   //change here for the days display
   const data = [
     { date: '01', day: 'Monday', amount: '0.00' },
@@ -17,8 +15,6 @@ const MonthComponent = ({ monthName, amount }) => {
     { date: '07', day: 'Monday', amount: '0.00' },
     { date: '08', day: 'Monday', amount: '0.00' },
     { date: '09', day: 'Monday', amount: '0.00' },
-
-
   ];
   const renderItem = ({ item }) => (
     <DaysComponent />

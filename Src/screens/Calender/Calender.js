@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, FlatList } from 'react-native'
 import Header from '../../Components/Header/Header'
 import Colors from '../../Constants/Colors'
 import MonthComponent from '../../Components/MonthComponent/MonthComponent'
-import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../../Components/constants';
+import { CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../../Components/constants';
+import { dayOfWeek ,date,monthOfYear,year, } from '../../Components/Helper';
 
 export default function Calender() {
 
@@ -28,22 +29,16 @@ export default function Calender() {
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.pageBackgroundColor }}>
-      <Header page={CALENDER_YEAR} data={{date:15,month:2,year:2024,day:'Monday'}}></Header>
-      <View style={{ flex: 1, marginTop: 10 }}>
+      <Header page={CALENDER_YEAR_MONTH} data={{date: date, month: monthOfYear, year: year, day: dayOfWeek }}></Header>
+      <View style={{ flex: 1, marginTop: 5 }}>
         <FlatList
           data={data}
           renderItem={renderItem}
           numColumns={2}
           showsVerticalScrollIndicator={false}
-
         />
       </View>
-
-
-
-
     </View>
-
   )
 }
 const styles = StyleSheet.create({

@@ -7,7 +7,7 @@ import { TODAY ,CALENDER_YEAR,CALENDER_YEAR_MONTH,CALENDER_YEAR_MONTH_DAY} from 
 export default function Header(props) {
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState('income');   //value= 'income or 'expense
   const changeDateAndTime = () => {
-    console.log(props?.data?.year);
+    console.log(props?.data?.month);
   }
 
   const selectType = (value) => {
@@ -16,31 +16,39 @@ export default function Header(props) {
 
   }
 
+  // const d={
+  //   2024:{
+  //     January:{ 
+  //       1:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],2:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],2:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],2:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}]}},
+        
+  //   }
+  // }
+
   return (
     <>
       <StatusBar
         backgroundColor={Colors.topBottomBarcolor}
         barStyle="light-content"
       />
-      <View style={styles.mainView}>
+      <>
         {(props.page == TODAY || props.page == CALENDER_YEAR_MONTH_DAY) &&
-          <View style={styles.subMainView}>
+          <View style={styles.mainView}>
             <View style={styles.calenderMainView} >
               <View style={styles.buttonView}>
                 <TouchableOpacity activeOpacity={1} onPress={changeDateAndTime}><AntDesign name="caretleft" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>
               </View>
               <View style={styles.dateMainView}>
                 <View style={styles.dateSubView}>
-                  <Text style={styles.text}>February </Text>
-                  <Text style={styles.text}>10, </Text>
-                  <Text style={styles.text}>2024</Text>
+                  <Text style={styles.text}>{props?.data?.month} </Text>
+                  <Text style={styles.text}>{props?.data?.date}, </Text>
+                  <Text style={styles.text}>{props?.data?.year}</Text>
                 </View>
                 <View style={styles.dayView}>
-                  <Text style={[styles.text, { fontSize: 25 }]}>Wednesday</Text>
+                  <Text style={[styles.text, { fontSize: 25 }]}>{props?.data?.day}</Text>
                 </View>
               </View>
               <View style={styles.buttonView}>
-                <TouchableOpacity activeOpacity={1} onPress={changeDateAndTime}><AntDesign name="caretright" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>
+                <TouchableOpacity activeOpacity={1} onPress={()=> props.page==CALENDER_YEAR_MONTH_DAY && changeDateAndTime}><AntDesign name="caretright" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>
               </View>
             </View>
             <View style={styles.showincomeExpensePriceView}>
@@ -67,17 +75,17 @@ export default function Header(props) {
         {/* change here for different page of parameter */}
 
         {(props.page == CALENDER_YEAR || props.page ==CALENDER_YEAR_MONTH) &&
-          <View style={styles.subMainView}>
+          <View style={styles.mainView}>
             <View style={styles.calenderMainView} >
               <View style={styles.buttonView}>
                 <TouchableOpacity activeOpacity={1} onPress={changeDateAndTime}><AntDesign name="caretleft" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>
               </View>
               <View style={styles.dateMainView}>
                 <View style={styles.dateSubView}>
-                  <Text style={[styles.text, props.page == 'CalenderWithYear' && { fontSize: 35 }]}>2024</Text>
+                  <Text style={[styles.text, props.page == 'CalenderWithYear' && { fontSize: 35 }]}>{props?.data?.year}</Text>
                 </View>
                 <View style={styles.dayView}>
-                  {props.page=='CalenderWithMonth_Year'&&<Text style={[styles.text, { fontSize: 35 }]}>January</Text>}
+                  {props.page=='CalenderWithMonth_Year'&&<Text style={[styles.text, { fontSize: 35 }]}>{props?.data?.month}</Text>}
                 </View>
               </View>
               <View style={styles.buttonView}>
@@ -100,16 +108,17 @@ export default function Header(props) {
                   <View><Text style={[isIncomeOrExpense == 'income' ? styles.selectedtype : styles.unSelectedTYpe]}>INCOME</Text></View>
                 </TouchableOpacity>
               </View>
+              
             </View> 
           </View>
         }
-      </View>
+      </>
     </>
   )
 }
 const styles = StyleSheet.create({
-  mainView: { flex: 0.24 },
-  subMainView: { flex: 1, alignItems: 'center' },
+  
+  mainView: { alignItems: 'center' },
   calenderMainView: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.topBottomBarcolor, width: '100%', justifyContent: 'center', paddingTop: 25 },
   buttonView: { paddingHorizontal: 10 },
   dateMainView: { alignItems: 'center' },
@@ -117,7 +126,7 @@ const styles = StyleSheet.create({
   text: { color: Colors.whitetextcolor, fontWeight: 'bold', fontSize: 15 },
   dayView: { alignItems: 'center' },
   showincomeExpensePriceView: { alignItems: 'center', paddingTop: 6, backgroundColor: Colors.topBottomBarcolor, width: '100%' },
-  incomeExpenseTabView: { flexDirection: 'row', alignItems: 'center', paddingBottom: 5, backgroundColor: Colors.topBottomBarcolor, width: '100%', justifyContent: 'center', borderBottomLeftRadius: 30, borderBottomRightRadius: 30 },
+  incomeExpenseTabView: { flexDirection: 'row',alignItems: 'center', paddingBottom: 5, backgroundColor: Colors.topBottomBarcolor, width: '100%', justifyContent: 'center', borderBottomLeftRadius: 30, borderBottomRightRadius: 30 },
   selectedtype: {
     fontWeight: 'bold', fontSize: 18,
     color: Colors.whitetextcolor,
@@ -126,5 +135,6 @@ const styles = StyleSheet.create({
   },
   unSelectedTYpe: {
     fontWeight: 'bold', fontSize: 18,
+    color:Colors.Platinumtextcolor
   }
 })

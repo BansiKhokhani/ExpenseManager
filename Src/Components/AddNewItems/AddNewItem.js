@@ -1,26 +1,31 @@
-import React, { useEffect, useState } from 'react'
-import {
-    Button, SafeAreaView, StyleSheet, Modal,
-    View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity
-} from 'react-native'
+import React, { useEffect, useState, useRef } from 'react'
+import {Button, SafeAreaView, StyleSheet, Modal,View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity} from 'react-native'
 import Colors from '../../Constants/Colors';
-
 const { width } = Dimensions.get("window");
 
 
-const AddNewItem = ({ isShowCustomComponent }) => {
+const AddNewItem = ({ isShowCustomComponent, onData }) => {
+    const textInputRef = useRef(null);
     const [isModalVisible, setModalVisible] = useState(true);
     const [inputDetail, setinputDetail] = useState("");
-    const [inputPrice, setinputPrice]=useState("");
+    const [inputPrice, setinputPrice] = useState();
 
     const toggleModalVisibility = () => {
         setModalVisible(!isModalVisible),
-            isShowCustomComponent(!isModalVisible)
+        isShowCustomComponent(!isModalVisible)
+    }
+
+    const sendDataToParent = () => {
+        const data = { inputDetail, inputPrice };
+        onData(data);
+        setinputDetail("");
+        setinputPrice("");
+        textInputRef.current.focus();
     }
 
     return (
-        <View style={{ flex: 1 }}>
-            <Modal 
+        <View >
+            <Modal
                 animationType="slide"
                 transparent visible={isModalVisible}
                 presentationStyle="overFullScreen"
@@ -30,24 +35,24 @@ const AddNewItem = ({ isShowCustomComponent }) => {
                         <>
                             <Text style={styles.headerText}>ADD NEW ITEM</Text>
                             <View style={{ marginVertical: 8 }}>
-                                <View style={[styles.dataView,{  marginVertical: 2 }]}>
+                                <View style={[styles.dataView, { marginVertical: 2 }]}>
                                     <Text style={styles.titileText}>Detail:</Text>
                                     <TextInput placeholder="Enter Detail...."
                                         value={inputDetail} style={styles.textInput}
-                                        onChangeText={(value) => setinputDetail(value)} />
+                                        onChangeText={(value) => setinputDetail(value)} ref={textInputRef} />
                                 </View>
                                 <View style={styles.dataView}>
                                     <Text style={styles.titileText}>Price:</Text>
                                     <TextInput placeholder="Enter Price...."
                                         value={inputPrice} style={styles.textInput}
-                                        onChangeText={(value) => setinputPrice(value)} />
+                                        onChangeText={(value) => {setinputPrice(value)}} />
                                 </View>
                             </View>
                         </>
 
                         {/** This button is responsible to close the modal */}
                         <View style={styles.buttonView}>
-                            <TouchableOpacity style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>ADD</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={sendDataToParent} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>ADD</Text></TouchableOpacity>
                             <TouchableOpacity onPress={toggleModalVisibility} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>CANCEL</Text></TouchableOpacity>
                         </View>
 
@@ -60,7 +65,7 @@ const AddNewItem = ({ isShowCustomComponent }) => {
 // These are user defined styles 
 const styles = StyleSheet.create({
     screen: {
-       flex: 1,
+        flex: 1,
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: Colors.popupbackgroundcolor
@@ -122,7 +127,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold'
     },
-    dataView:{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 },
-    titileText:{ fontSize: 15, fontWeight: 'bold', color: Colors.textcolor, width: 60 }
+    dataView: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 12 },
+    titileText: { fontSize: 15, fontWeight: 'bold', color: Colors.textcolor, width: 60 }
 });
 export default AddNewItem;
