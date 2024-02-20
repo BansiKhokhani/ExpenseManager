@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import {Button, SafeAreaView, StyleSheet, Modal,View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity} from 'react-native'
 import Colors from '../../Constants/Colors';
 const { width } = Dimensions.get("window");
@@ -16,6 +16,7 @@ const AddNewItem = ({ isShowCustomComponent, onData }) => {
     }
 
     const sendDataToParent = () => {
+       
         const data = { inputDetail, inputPrice };
         onData(data);
         setinputDetail("");
@@ -39,13 +40,14 @@ const AddNewItem = ({ isShowCustomComponent, onData }) => {
                                     <Text style={styles.titileText}>Detail:</Text>
                                     <TextInput placeholder="Enter Detail...."
                                         value={inputDetail} style={styles.textInput}
-                                        onChangeText={(value) => setinputDetail(value)} ref={textInputRef} />
+                                        onChangeText={(value) => {setinputDetail(value)}} ref={textInputRef} />
                                 </View>
                                 <View style={styles.dataView}>
                                     <Text style={styles.titileText}>Price:</Text>
                                     <TextInput placeholder="Enter Price...."
                                         value={inputPrice} style={styles.textInput}
-                                        onChangeText={(value) => {setinputPrice(value)}} />
+                                        keyboardType="numeric"
+                                        onChangeText={(value) => { (/^\d*\.?\d*$/.test(value))&& setinputPrice(value);}} />
                                 </View>
                             </View>
                         </>

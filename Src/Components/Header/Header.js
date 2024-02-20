@@ -3,129 +3,134 @@ import { View, Text, StatusBar, TouchableOpacity, StyleSheet } from 'react-nativ
 import Colors from '../../Constants/Colors'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../constants';
-import { year, IndexOfmonth, MonthOfYear, month, DaysOfMonth, DayOfWeek, IndexofDay, dayOfWeek, date, monthOfYear } from '../Helper';
+import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date } from '../Helper';
 
 export default function Header({ page, data, onInfo }) {
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState('income');   //value= 'income or 'expense
   const [allData, setAllData] = useState(data);  // month, year, day, date
 
 
+  // Function call on Next button
   const changeForward_Date_year_month_day = () => {
-    if (page == CALENDER_YEAR) {
-      if ((allData?.year + 1) <= year) // not go forward if the selected year is same as the current year
-      {
-        setAllData({ ...allData, year: (allData?.year + 1) })
-        onInfo({ ...allData, year: (allData?.year + 1) })
-      }
+    const nextMonthIndex = indexOfMonth(allData?.month) + 1;
+    const nextMonthName = monthnameOfYear(nextMonthIndex);
+    const nextDayIndex = (indexOfDay(allData?.day) + 1) % 7;
+    const nextDayNameOfWeek = daynameOfWeek(nextDayIndex);
+
+    const setAndNotifyAllData = (data) => {
+      setAllData(data);
+      onInfo(data);
     }
-    else if (page == CALENDER_YEAR_MONTH) {
-      if ((IndexOfmonth(allData?.month)) >= 11) {
-        setAllData({ ...allData, month: 'January', year: (allData?.year + 1) })
-        onInfo({ ...allData, month: 'January', year: (allData?.year + 1) })
-      }
+
+    const nextYear = () => {
+      if ((allData?.year + 1) <= year) // not go forward if the selected year is same as the current year
+        setAndNotifyAllData({ ...allData, year: (allData?.year + 1) });
+    }
+
+    const nextYear_Month = () => {
+      if (nextMonthIndex >= 12)
+        setAndNotifyAllData({ ...allData, month: 'January', year: (allData?.year + 1) });
       else {
         if (allData?.year == year) {
-          if (((IndexOfmonth(allData?.month) + 1)) < (month))
-            setAllData({ ...allData, month: (MonthOfYear((IndexOfmonth(allData?.month) + 1))) })
-          onInfo({ ...allData, month: (MonthOfYear((IndexOfmonth(allData?.month) + 1))) })
+          if (nextMonthIndex < (month))
+            setAndNotifyAllData({ ...allData, month: nextMonthName });
         }
-        else {
-          setAllData({ ...allData, month: (MonthOfYear((IndexOfmonth(allData?.month) + 1))) })
-          onInfo({ ...allData, month: (MonthOfYear((IndexOfmonth(allData?.month) + 1))) })
-        }
+        else
+          setAndNotifyAllData({ ...allData, month: nextMonthName })
       }
     }
-    else {
 
+    const nextYear_Month_Day = () => {    
       if (allData?.year == year) {
-        if ((IndexOfmonth(allData?.month) + 1) == month) {
-          if (allData?.date < date) {
-            setAllData({ ...allData, date: (allData?.date + 1), day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7) })
-            onInfo({ ...allData, date: (allData?.date + 1), day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7) })
-          }
+        if (nextMonthIndex == month) {
+          if (allData?.date < date) 
+                setAndNotifyAllData({ ...allData, date: (allData?.date + 1), day: nextDayNameOfWeek });
         }
-        else if ((IndexOfmonth(allData?.month) + 1) < month) {
-          if (DaysOfMonth(allData?.month, allData?.year) == allData?.date) {
-            if (allData?.month == 'December') {
-              setAllData({ ...allData, date: 1, day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7), month: 'January', year: allData?.year + 1 })
-              onInfo({ ...allData, date: 1, day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7), month: 'January', year: allData?.year + 1 })
-            }
-            else {
-              setAllData({ ...allData, date: 1, day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7), month: (MonthOfYear((IndexOfmonth(allData?.month) + 1))) })
-              onInfo({ ...allData, date: 1, day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7), month: (MonthOfYear((IndexOfmonth(allData?.month) + 1))) })
-            }
-          }
-          else {
-            setAllData({ ...allData, date: (allData?.date + 1), day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7) })
-            onInfo({ ...allData, date: (allData?.date + 1), day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7) })
-          }
-        }
-        
+        else if (nextMonthIndex < month) 
+            handleMonthsLastDay();
       }
-      else {
+      else 
+        handleMonthsLastDay();
 
-        if (DaysOfMonth(allData?.month, allData?.year) == allData?.date) {
-          if (allData?.month == 'December') {
-            setAllData({ ...allData, date: 1, day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7), month: 'January', year: allData?.year + 1 })
-            onInfo({ ...allData, date: 1, day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7), month: 'January', year: allData?.year + 1 })
-          }
-          else {
-            setAllData({ ...allData, date: 1, day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7), month: (MonthOfYear((IndexOfmonth(allData?.month) + 1))) })
-            onInfo({ ...allData, date: 1, day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7), month: (MonthOfYear((IndexOfmonth(allData?.month) + 1))) })
-          }
+      // child function
+      const handleMonthsLastDay=()=>{
+        if (daysOfMonth(allData?.month, allData?.year) == allData?.date) {
+          if (allData?.month == 'December') 
+            setAndNotifyAllData({ ...allData, date: 1, day: nextDayNameOfWeek, month: 'January', year: allData?.year + 1 });
+          else 
+            setAndNotifyAllData({ ...allData, date: 1, day: nextDayNameOfWeek, month: nextMonthName });
         }
-        else {
-          setAllData({ ...allData, date: (allData?.date + 1), day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7) })
-          onInfo({ ...allData, date: (allData?.date + 1), day: DayOfWeek((IndexofDay(allData?.day) + 1) % 7) })
-        }
+        else 
+          setAndNotifyAllData({ ...allData, date: (allData?.date + 1), day: nextDayNameOfWeek });
       }
     }
 
+    if (page == CALENDER_YEAR)
+      nextYear();
+    else if (page == CALENDER_YEAR_MONTH)
+      nextYear_Month();
+    else
+      nextYear_Month_Day();
+
   }
 
+  // Function call on previous button
   const changeBack_Date_year_month_day = () => {
-    if (page == CALENDER_YEAR) {
-      if ((allData?.year - 1) >= 2014) {
-        setAllData({ ...allData, year: (allData?.year - 1) })
-        onInfo({ ...allData, year: (allData?.year - 1) })
-      }
-    }
-    else if (page == CALENDER_YEAR_MONTH) {
-      if ((IndexOfmonth(allData?.month)) <= 0) {
-        if ((allData?.year - 1 >= 2014)) {
-          setAllData({ ...allData, month: 'December', year: (allData?.year - 1) })
-          onInfo({ ...allData, month: 'December', year: (allData?.year - 1) })
-        }
-      }
-      else {
+    const currentDayIndex = indexOfDay(allData?.day);
+    const currentMonthIndex = indexOfMonth(allData?.month);
+    const previousDayIndex = (currentDayIndex === 0) ? 6 : (currentDayIndex - 1);
+    const previousMonth = monthnameOfYear(currentMonthIndex - 1);
 
-        setAllData({ ...allData, month: (MonthOfYear((IndexOfmonth(allData?.month) - 1))) })
-        onInfo({ ...allData, month: (MonthOfYear((IndexOfmonth(allData?.month) - 1))) })
-      }
+    // set actual data
+    const setAndNotifyAllData = (data) => {
+      setAllData(data);
+      onInfo(data);
     }
-    else {
-      const previousDayIndex = (IndexofDay(allData?.day) === 0) ? 6 : (IndexofDay(allData?.day) - 1);
+
+    // previous button to select previous year 
+    const previousYear = () => {
+      if ((allData?.year - 1) >= 2014)
+        setAndNotifyAllData({ ...allData, year: (allData?.year - 1) });
+    }
+
+    // previous button to select previous year and month
+    const previousYear_Month = () => {
+      if (currentMonthIndex <= 0) {
+        if ((allData?.year - 1 >= 2014))
+          setAndNotifyAllData({ ...allData, month: 'December', year: (allData?.year - 1) });
+      }
+      else
+        setAndNotifyAllData({ ...allData, month: previousMonth });
+    }
+
+    // previous button to select previous year, month and day, date
+    const previousYear_Month_day = () => {
+      const previousDay = daynameOfWeek(previousDayIndex);
       if (allData?.date <= 1) {
-        if ((IndexOfmonth(allData?.month)) <= 0) {
-          if ((allData?.year - 1 >= 2014)) {
-            setAllData({ ...allData, year: (allData?.year - 1), date: DaysOfMonth('December', allData?.year), month: 'December', day: DayOfWeek(previousDayIndex) })
-            onInfo({ ...allData, year: (allData?.year - 1), date: DaysOfMonth('December', allData?.year), month: 'December', day: DayOfWeek(previousDayIndex) })
-          }
+        if (currentMonthIndex <= 0) {
+          if ((allData?.year - 1 >= 2014))
+            setAndNotifyAllData({ ...allData, year: (allData?.year - 1), date: daysOfMonth('December', allData?.year), month: 'December', day: previousDay });
         }
         else {
-          const month = (MonthOfYear((IndexOfmonth(allData?.month) - 1)));
-          setAllData({ ...allData, date: DaysOfMonth(month, allData?.year), month: (MonthOfYear((IndexOfmonth(allData?.month) - 1))), day: DayOfWeek(previousDayIndex) })
-          onInfo({ ...allData, date: DaysOfMonth(month, allData?.year), month: (MonthOfYear((IndexOfmonth(allData?.month) - 1))), day: DayOfWeek(previousDayIndex) })
+          const month = previousMonth;
+          setAndNotifyAllData({ ...allData, date: daysOfMonth(month, allData?.year), month: previousMonth, day: previousDay })
         }
       }
-      else {
-        console.log(DayOfWeek((IndexofDay(allData?.day) - 1) % 7));
-        setAllData({ ...allData, date: allData?.date - 1, day: DayOfWeek(previousDayIndex) })
-        onInfo({ ...allData, date: allData?.date - 1, day: DayOfWeek(previousDayIndex) })
-      }
+      else
+        setAndNotifyAllData({ ...allData, date: allData?.date - 1, day: previousDay })
     }
 
+
+    if (page === CALENDER_YEAR)  // change only year back
+      previousYear();
+    else if (page === CALENDER_YEAR_MONTH)   //change year, month back
+      previousYear_Month();
+    else   //change year, month, day back
+      previousYear_Month_day();
+
   }
+
+
   const selectType = (value) => {
     setIsIncomeOrExpense(value);
   }

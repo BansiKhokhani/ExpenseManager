@@ -8,7 +8,7 @@ import { dayOfWeek, date, monthOfYear, year, month } from '../../Components/Help
 
 export default function Calender() {
   const [selectedYear, setSelectedYear] = useState(year);     // cureent selected year in app
-  const [selectedPageMode, setSelectedPageMode]=useState(CALENDER_YEAR_MONTH_DAY);    
+  const [selectedPageMode, setSelectedPageMode]=useState(CALENDER_YEAR);    
   const data = [
     { id: '1', monthName: 'January', amount: '0.00' },
     { id: '2', monthName: 'February', amount: '0.00' },

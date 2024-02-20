@@ -8,38 +8,36 @@ const dayOfWeekNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 
 export const dayOfWeek = dayOfWeekNames[day];
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 export const monthOfYear = monthNames[month-1];
+const numberOfDaysInMonth={January:31,February:28,March:31,April:30,May:31,June:30,July:31,August:31,September:30,October:31,November:30,December:31};
 
-export const IndexOfmonth=(monthName)=>{
+export const indexOfMonth=(monthName)=>{
     for(i=0;i<12;i++)
     {
         if(monthNames[i]==monthName)
-        {
             return i;
-        }
+        
     }
 }
 
-export const MonthOfYear=(month)=>{
+export const monthnameOfYear=(month)=>{
     return monthNames[month];
 }
 
-export const DayOfWeek=(day)=>{
+export const daynameOfWeek=(day)=>{
     return dayOfWeekNames[day];
 }
 
-export const IndexofDay=(dayName)=>
+export const indexOfDay=(dayName)=>
 {
     for(i=0;i<7;i++)
     {
         if(dayOfWeekNames[i]==dayName)
-        {
                 return i;
-        }
     }
 }
 
-const numberOfDaysInMonth={January:31,February:28,March:31,April:30,May:31,June:30,July:31,August:31,September:30,October:31,November:30,December:31};
-export const DaysOfMonth=(month,year)=>
+
+export const daysOfMonth=(month,year)=>
 {
     if(month=='February')
     {
@@ -49,6 +47,5 @@ export const DaysOfMonth=(month,year)=>
         else
             return 28;
     }
-    console.log(numberOfDaysInMonth[month]);
     return numberOfDaysInMonth[month];
 }
