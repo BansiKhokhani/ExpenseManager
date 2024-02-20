@@ -27,7 +27,7 @@ export default function Today() {
 
   return (
     <View style={styles.mainView}>
-      <Header page={TODAY} data={{date: date, month: monthOfYear, year: year, day: dayOfWeek }}></Header>
+      <Header page={TODAY} data={{date: date, month: monthOfYear, year: year, day: dayOfWeek }} onInfo={(value)=>{console.log(value)}}></Header>
       <View style={{ flex: 1 }}>
         {
           showCustomComponent && (

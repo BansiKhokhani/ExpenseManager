@@ -4,10 +4,11 @@ import Header from '../../Components/Header/Header'
 import Colors from '../../Constants/Colors'
 import MonthComponent from '../../Components/MonthComponent/MonthComponent'
 import { CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../../Components/constants';
-import { dayOfWeek ,date,monthOfYear,year, } from '../../Components/Helper';
+import { dayOfWeek, date, monthOfYear, year, month } from '../../Components/Helper';
 
 export default function Calender() {
-
+  const [selectedYear, setSelectedYear] = useState(year);     // cureent selected year in app
+  const [selectedPageMode, setSelectedPageMode]=useState(CALENDER_YEAR_MONTH_DAY);    
   const data = [
     { id: '1', monthName: 'January', amount: '0.00' },
     { id: '2', monthName: 'February', amount: '0.00' },
@@ -27,17 +28,21 @@ export default function Calender() {
     <MonthComponent monthName={item.monthName} amount={item.amount} />
   );
 
+  const handleMonth_Year_Date_Day = (value) => {
+    setSelectedYear(value?.year);
+  }
   return (
     <View style={{ flex: 1, backgroundColor: Colors.pageBackgroundColor }}>
-      <Header page={CALENDER_YEAR_MONTH} data={{date: date, month: monthOfYear, year: year, day: dayOfWeek }}></Header>
-      <View style={{ flex: 1, marginTop: 5 }}>
+      <Header page={selectedPageMode} data={{ date: date, month: monthOfYear, year: year, day: dayOfWeek }} onInfo={handleMonth_Year_Date_Day}></Header>
+      {selectedPageMode==CALENDER_YEAR && 
+        <View style={{ flex: 1, marginTop: 5 }}>
         <FlatList
-          data={data}
+          data={selectedYear == year ? data.slice(0,month):data.slice(0, 12)}
           renderItem={renderItem}
           numColumns={2}
           showsVerticalScrollIndicator={false}
         />
-      </View>
+      </View>}
     </View>
   )
 }
