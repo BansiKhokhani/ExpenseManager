@@ -13,7 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Stack = createNativeStackNavigator();
 const Tab=createBottomTabNavigator();
 
-function navigationContainer() {
+const navigationContainer=()=>{
   return (
     <NavigationContainer>
       <Tab.Navigator

@@ -17,6 +17,7 @@ export default function Calender() {
   const isFocused = useIsFocused();
   //called when screen isfocused
   useEffect(()=>{
+    setSelectedPageMode(CALENDER_YEAR)
     setIsMonthSelected(false)
   },[isFocused])
 

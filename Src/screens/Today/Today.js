@@ -27,7 +27,7 @@ export default function Today({navigation}) {
 
   return (
     <View style={styles.mainView}>
-      <Header page={TODAY} onInfo={(value)=>{}}></Header>
+      <Header page={TODAY} data={{ date: date, month: monthOfYear, year: year, day: dayOfWeek }} onInfo={(value)=>{}}></Header>
       <View style={{ flex: 1 }}>
         {
           showCustomComponent && (
