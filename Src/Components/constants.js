@@ -11,3 +11,8 @@ export const TODAY='Today';
 export const CALENDER_YEAR_MONTH_DAY='CalendarWithMonth_day_Year';
 export const CALENDER_YEAR_MONTH='CalenderWithMonth_Year';
 export const CALENDER_YEAR='CalenderWithYear';
+
+
+// EXPENSE , INCOME CONSTANT
+export const EXPENSE='Expense';
+export const INCOME='Income';

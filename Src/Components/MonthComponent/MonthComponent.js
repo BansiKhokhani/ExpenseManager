@@ -1,32 +1,12 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../../Constants/Colors';
-import DaysComponent from '../DaysComponent/DaysComponent';
 
-const MonthComponent = ({ monthName, amount }) => {
-  //change here for the days display
-  const data = [
-    { date: '01', day: 'Monday', amount: '0.00' },
-    { date: '02', day: 'Monday', amount: '0.00' },
-    { date: '03', day: 'Monday', amount: '0.00' },
-    { date: '04', day: 'Monday', amount: '0.00' },
-    { date: '05', day: 'Monday', amount: '0.00' },
-    { date: '06', day: 'Monday', amount: '0.00' },
-    { date: '07', day: 'Monday', amount: '0.00' },
-    { date: '08', day: 'Monday', amount: '0.00' },
-    { date: '09', day: 'Monday', amount: '0.00' },
-  ];
-  const renderItem = ({ item }) => (
-    <DaysComponent />
-  );
+const MonthComponent = ({ monthName, amount,isPress }) => {
+ 
 
   const showMonthAllDays = () => (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-      />
-    </View>
+    isPress(true)
   );
 
   return (

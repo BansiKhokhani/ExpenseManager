@@ -1,27 +1,47 @@
 import React, { useState, useRef } from 'react'
-import {Button, SafeAreaView, StyleSheet, Modal,View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity} from 'react-native'
+import { Button, SafeAreaView, StyleSheet, Modal, View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity } from 'react-native'
 import Colors from '../../Constants/Colors';
+import Toast from 'react-native-simple-toast';
 const { width } = Dimensions.get("window");
 
 
 const AddNewItem = ({ isShowCustomComponent, onData }) => {
-    const textInputRef = useRef(null);
+    const textInputDetailRef = useRef(null);
+    const textInputPriceRef = useRef(null);
     const [isModalVisible, setModalVisible] = useState(true);
     const [inputDetail, setinputDetail] = useState("");
     const [inputPrice, setinputPrice] = useState();
 
     const toggleModalVisibility = () => {
         setModalVisible(!isModalVisible),
-        isShowCustomComponent(!isModalVisible)
+            isShowCustomComponent(!isModalVisible)
     }
 
     const sendDataToParent = () => {
-       
-        const data = { inputDetail, inputPrice };
-        onData(data);
-        setinputDetail("");
-        setinputPrice("");
-        textInputRef.current.focus();
+
+        if (inputDetail.length <= 0 && inputPrice == null)
+        {
+            Toast.show('Please Enter the Detail and Price.', Toast.LONG);
+            textInputDetailRef.current.focus();
+        }
+        else if (inputDetail.length <= 0)
+        {
+            Toast.show('Please Enter the Detail.', Toast.LONG);
+            textInputDetailRef.current.focus();
+        }
+        else if (inputPrice == null)
+        {
+            Toast.show('Please Enter the price.', Toast.LONG,);
+            textInputPriceRef.current.focus();
+        }
+        else {
+            Toast.show('Added!', Toast.LONG,);
+            const data = { inputDetail, inputPrice };
+            onData(data);
+            setinputDetail("");
+            setinputPrice();
+            textInputDetailRef.current.focus();
+        }
     }
 
     return (
@@ -40,14 +60,14 @@ const AddNewItem = ({ isShowCustomComponent, onData }) => {
                                     <Text style={styles.titileText}>Detail:</Text>
                                     <TextInput placeholder="Enter Detail...."
                                         value={inputDetail} style={styles.textInput}
-                                        onChangeText={(value) => {setinputDetail(value)}} ref={textInputRef} />
+                                        onChangeText={(value) => { setinputDetail(value) }} ref={textInputDetailRef} />
                                 </View>
                                 <View style={styles.dataView}>
                                     <Text style={styles.titileText}>Price:</Text>
                                     <TextInput placeholder="Enter Price...."
                                         value={inputPrice} style={styles.textInput}
                                         keyboardType="numeric"
-                                        onChangeText={(value) => { (/^\d*\.?\d*$/.test(value))&& setinputPrice(value);}} />
+                                        onChangeText={(value) => { (/^\d*\.?\d*$/.test(value)) && setinputPrice(value); }}  ref={textInputPriceRef}/>
                                 </View>
                             </View>
                         </>

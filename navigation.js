@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Colors from './Src/Constants/Colors';
-import Calender from './Src/screens/Calender/Calender';
+import Calendar from './Src/screens/Calender/Calender';
 import Today from './Src/screens/Today/Today';
 import Report from './Src/screens/Report/Report'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -27,7 +27,7 @@ function navigationContainer() {
                 iconName = focused
                   ? 'today'
                   : 'today-outline';
-              } else if (route.name === 'Calender') {
+              } else if (route.name === 'Calendar') {
                 iconName = focused ? 'calendar' : 'calendar-outline';
               }
               else if(route.name==='Report'){
@@ -50,8 +50,8 @@ function navigationContainer() {
           }}
           />
           <Tab.Screen
-            name="Calender"
-            component={Calender}  
+            name="Calendar"
+            component={Calendar}  
             options={{headerShown:false}}
           />
            <Tab.Screen

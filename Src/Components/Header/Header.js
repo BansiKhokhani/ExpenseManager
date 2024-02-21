@@ -1,15 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { View, Text, StatusBar, TouchableOpacity, StyleSheet } from 'react-native'
 import Colors from '../../Constants/Colors'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../constants';
-import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date } from '../Helper';
-
-export default function Header({ page, data, onInfo }) {
-  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState('income');   //value= 'income or 'expense
-  const [allData, setAllData] = useState(data);  // month, year, day, date
+import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY,EXPENSE,INCOME } from '../constants';
+import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date ,monthOfYear,dayOfWeek} from '../Helper';
+import { useIsFocused } from '@react-navigation/native';
 
 
+export default function Header({ page, data,onInfo}) {
+  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);   //value= 'income or 'expense
+  const initialData=data;    // today date, day, month, year
+  const [allData, setAllData] = useState(initialData);  // month, year, day, date
+  const isFocused = useIsFocused();
+
+  //used useEffact to reset with initial value when screen gain the focus
+  useEffect(()=>{
+    setAllData(initialData);
+    if(page==CALENDER_YEAR||page==CALENDER_YEAR_MONTH||page==CALENDER_YEAR_MONTH_DAY)
+      onInfo(initialData)
+    setIsIncomeOrExpense(EXPENSE)
+  },[isFocused])
+
+
+ 
   // Function call on Next button
   const changeForward_Date_year_month_day = () => {
     const nextMonthIndex = indexOfMonth(allData?.month) + 1;
@@ -47,22 +60,21 @@ export default function Header({ page, data, onInfo }) {
                 setAndNotifyAllData({ ...allData, date: (allData?.date + 1), day: nextDayNameOfWeek });
         }
         else if (nextMonthIndex < month) 
-            handleMonthsLastDay();
+        handleMonthsLastDay();
       }
       else 
-        handleMonthsLastDay();
-
-      // child function
-      const handleMonthsLastDay=()=>{
-        if (daysOfMonth(allData?.month, allData?.year) == allData?.date) {
-          if (allData?.month == 'December') 
-            setAndNotifyAllData({ ...allData, date: 1, day: nextDayNameOfWeek, month: 'January', year: allData?.year + 1 });
-          else 
-            setAndNotifyAllData({ ...allData, date: 1, day: nextDayNameOfWeek, month: nextMonthName });
-        }
+      handleMonthsLastDay();
+    }
+     // child function
+    const handleMonthsLastDay=()=>{
+      if (daysOfMonth(allData?.month, allData?.year) == allData?.date) {
+        if (allData?.month == 'December') 
+          setAndNotifyAllData({ ...allData, date: 1, day: nextDayNameOfWeek, month: 'January', year: allData?.year + 1 });
         else 
-          setAndNotifyAllData({ ...allData, date: (allData?.date + 1), day: nextDayNameOfWeek });
+          setAndNotifyAllData({ ...allData, date: 1, day: nextDayNameOfWeek, month: nextMonthName });
       }
+      else 
+        setAndNotifyAllData({ ...allData, date: (allData?.date + 1), day: nextDayNameOfWeek });
     }
 
     if (page == CALENDER_YEAR)
@@ -154,7 +166,7 @@ export default function Header({ page, data, onInfo }) {
           <View style={styles.mainView}>
             <View style={styles.calenderMainView} >
               <View style={styles.buttonView}>
-                <TouchableOpacity activeOpacity={1} onPress={changeBack_Date_year_month_day}><AntDesign name="caretleft" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>
+               { page!=TODAY&&<TouchableOpacity activeOpacity={1} onPress={changeBack_Date_year_month_day}><AntDesign name="caretleft" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>}
               </View>
               <View style={styles.dateMainView}>
                 <View style={styles.dateSubView}>
@@ -167,23 +179,23 @@ export default function Header({ page, data, onInfo }) {
                 </View>
               </View>
               <View style={styles.buttonView}>
-                <TouchableOpacity activeOpacity={1} onPress={page == CALENDER_YEAR_MONTH_DAY ? changeForward_Date_year_month_day : () => ''}><AntDesign name="caretright" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>
+                {page!=TODAY&&<TouchableOpacity activeOpacity={1} onPress={page == CALENDER_YEAR_MONTH_DAY ? changeForward_Date_year_month_day : () => ''}><AntDesign name="caretright" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>}
               </View>
             </View>
             <View style={styles.showincomeExpensePriceView}>
-              <Text style={styles.text}>{isIncomeOrExpense == 'expense' ? 'Expense' : 'Income'}</Text>
+              <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ? EXPENSE : INCOME}</Text>
               <Text style={styles.text}>0.00</Text>
             </View>
 
             <View style={styles.incomeExpenseTabView}>
               <View style={{ paddingRight: 80 }}>
-                <TouchableOpacity activeOpacity={1} onPress={() => { selectType('expense') }}>
-                  <View><Text style={[isIncomeOrExpense == 'expense' ? styles.selectedtype : styles.unSelectedTYpe]}>EXPENSES</Text></View>
+                <TouchableOpacity activeOpacity={1} onPress={() => { selectType(EXPENSE) }}>
+                  <View><Text style={[isIncomeOrExpense == EXPENSE ? styles.selectedtype : styles.unSelectedTYpe]}>EXPENSE</Text></View>
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity activeOpacity={1} onPress={() => { selectType('income') }}>
-                  <View><Text style={[isIncomeOrExpense == 'income' ? styles.selectedtype : styles.unSelectedTYpe]}>INCOME</Text></View>
+                <TouchableOpacity activeOpacity={1} onPress={() => { selectType(INCOME) }}>
+                  <View><Text style={[isIncomeOrExpense == INCOME ? styles.selectedtype : styles.unSelectedTYpe]}>INCOME</Text></View>
                 </TouchableOpacity>
               </View>
             </View>
@@ -204,7 +216,7 @@ export default function Header({ page, data, onInfo }) {
                   <Text style={[styles.text, page == 'CalenderWithYear' && { fontSize: 35 }]}>{allData?.year}</Text>
                 </View>
                 <View style={styles.dayView}>
-                  {page == 'CalenderWithMonth_Year' && <Text style={[styles.text, { fontSize: 35 }]}>{allData?.month}</Text>}
+                  {page == 'CalenderWithMonth_Year' && <Text style={[styles.text, { fontSize: 30 }]}>{allData?.month}</Text>}
                 </View>
               </View>
               <View style={styles.buttonView}>
@@ -212,19 +224,19 @@ export default function Header({ page, data, onInfo }) {
               </View>
             </View>
             <View style={styles.showincomeExpensePriceView}>
-              <Text style={styles.text}>{isIncomeOrExpense == 'expense' ? 'Expense' : 'Income'}</Text>
+              <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ? EXPENSE : INCOME}</Text>
               <Text style={styles.text}>0.00</Text>
             </View>
 
             <View style={styles.incomeExpenseTabView}>
               <View style={{ paddingRight: 80 }}>
-                <TouchableOpacity activeOpacity={1} onPress={() => { selectType('expense') }}>
-                  <View><Text style={[isIncomeOrExpense == 'expense' ? styles.selectedtype : styles.unSelectedTYpe]}>EXPENSES</Text></View>
+                <TouchableOpacity activeOpacity={1} onPress={() => { selectType(EXPENSE) }}>
+                  <View><Text style={[isIncomeOrExpense ==EXPENSE ? styles.selectedtype : styles.unSelectedTYpe]}>EXPENSE</Text></View>
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity activeOpacity={1} onPress={() => { selectType('income') }}>
-                  <View><Text style={[isIncomeOrExpense == 'income' ? styles.selectedtype : styles.unSelectedTYpe]}>INCOME</Text></View>
+                <TouchableOpacity activeOpacity={1} onPress={() => { selectType(INCOME) }}>
+                  <View><Text style={[isIncomeOrExpense == INCOME ? styles.selectedtype : styles.unSelectedTYpe]}>INCOME</Text></View>
                 </TouchableOpacity>
               </View>
 

@@ -6,9 +6,9 @@ import Colors from '../../Constants/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent';
 import { dayOfWeek ,date,monthOfYear,year, } from '../../Components/Helper';
-import { TODAY } from '../../Components/constants';
+import { CALENDER_YEAR_MONTH_DAY, TODAY } from '../../Components/constants';
 
-export default function Today() {
+export default function Today({navigation}) {
   const [showCustomComponent, setShowCustomComponent] = useState(false);
   const [data,setData]=useState([]);
 
@@ -27,7 +27,7 @@ export default function Today() {
 
   return (
     <View style={styles.mainView}>
-      <Header page={TODAY} data={{date: date, month: monthOfYear, year: year, day: dayOfWeek }} onInfo={(value)=>{console.log(value)}}></Header>
+      <Header page={TODAY} onInfo={(value)=>{}}></Header>
       <View style={{ flex: 1 }}>
         {
           showCustomComponent && (
