@@ -1,11 +1,21 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../../Constants/Colors';
+import { UseSelector,useDispatch, useSelector } from 'react-redux';
+import { updateselected_Date_Month_Year } from '../Redux/Action';
+
 
 const MonthComponent = ({ monthName, amount,isPress }) => {
- 
+  const dispatch=useDispatch();
+  const {selectedDate,selectedDay,selectedMonth,selectedYear}=useSelector(state=>state.selectedDateMonthYearReducer)
+
+
+  const handleDispatch=(selectedDate,selectedDay,selectedMonth,selectedYear)=>{
+    dispatch(updateselected_Date_Month_Year(selectedDate,selectedDay,selectedMonth,selectedYear))
+  }
 
   const showMonthAllDays = () => (
+    handleDispatch(selectedDate,selectedDay,monthName,selectedYear),
     isPress(true)
   );
 

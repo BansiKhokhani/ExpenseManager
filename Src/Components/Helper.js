@@ -18,15 +18,12 @@ export const indexOfMonth=(monthName)=>{
         
     }
 }
-
 export const monthnameOfYear=(month)=>{
     return monthNames[month];
 }
-
 export const daynameOfWeek=(day)=>{
     return dayOfWeekNames[day];
 }
-
 export const indexOfDay=(dayName)=>
 {
     for(i=0;i<7;i++)
@@ -35,17 +32,36 @@ export const indexOfDay=(dayName)=>
                 return i;
     }
 }
-
-
 export const daysOfMonth=(month,year)=>
 {
     if(month=='February')
     {
-        
         if(year%4==0)
             return 29;
         else
             return 28;
     }
     return numberOfDaysInMonth[month];
+}
+
+//used to call on days display as per month
+export const daysOfMonthData=(currentMonth,currentYear)=>{
+    console.log(currentMonth);
+    const numberOfDays=daysOfMonth(currentMonth,currentYear);
+    const monthindex=(indexOfMonth(currentMonth)+1)
+    const data=[];
+    for(i=1;i<=numberOfDays;i++)
+    {
+        const dateString=new Date(`${currentYear}-${monthindex}-${i}`);
+        const dayOfWeek=dayOfWeekNames[dateString.getDay()];
+        data.push({date:i,day:dayOfWeek,amount:0.00})
+        // this condtion for the current year and month to display days until today
+        if(currentYear==year && monthindex==month)
+        {
+            if(i==date)
+                break;
+        }
+    }
+   
+    return data;
 }

@@ -5,59 +5,71 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY,EXPENSE,INCOME } from '../constants';
 import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date ,monthOfYear,dayOfWeek} from '../Helper';
 import { useIsFocused } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateselected_Date_Month_Year } from '../Redux/Action';
 
-
-export default function Header({ page, data,onInfo}) {
+export default function Header({ page}) {
+  const dispatch = useDispatch();
+  const initialData=useSelector(state => state.selectedDateMonthYearReducer);  //get data from redux
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);   //value= 'income or 'expense
-  const initialData=data;    // today date, day, month, year
-  const [allData, setAllData] = useState(initialData);  // month, year, day, date
+  const [allData, setAllData] = useState(initialData);  // set redux data
   const isFocused = useIsFocused();
-
+ 
+  // dispatch data 
+  const handleDispatch=(selectedDate,selectedDay,selectedMonth,selectedYear)=>{
+    dispatch(updateselected_Date_Month_Year(selectedDate,selectedDay,selectedMonth,selectedYear))
+  }
+ 
   //used useEffact to reset with initial value when screen gain the focus
   useEffect(()=>{
-    setAllData(initialData);
-    if(page==CALENDER_YEAR||page==CALENDER_YEAR_MONTH||page==CALENDER_YEAR_MONTH_DAY)
-      onInfo(initialData)
+    handleDispatch(date,dayOfWeek,monthOfYear,year);
+    setAllData({selectedDate:date,selectedDay:dayOfWeek,selectedMonth:monthOfYear,selectedYear:year}); //set today date, month, year, day on screen change
     setIsIncomeOrExpense(EXPENSE)
   },[isFocused])
 
-
+  // used useEffact to setAllData when TODAY page not focused
+  useEffect(()=>{
+    if(page!=TODAY)
+      setAllData(initialData)
+  },[initialData])
  
   // Function call on Next button
   const changeForward_Date_year_month_day = () => {
-    const nextMonthIndex = indexOfMonth(allData?.month) + 1;
+    const nextMonthIndex = indexOfMonth(allData?.selectedMonth) + 1;
     const nextMonthName = monthnameOfYear(nextMonthIndex);
-    const nextDayIndex = (indexOfDay(allData?.day) + 1) % 7;
+    const nextDayIndex = (indexOfDay(allData?.selectedDay) + 1) % 7;
     const nextDayNameOfWeek = daynameOfWeek(nextDayIndex);
 
     const setAndNotifyAllData = (data) => {
+      
       setAllData(data);
-      onInfo(data);
+      handleDispatch(data.selectedDate,data.selectedDay,data.selectedMonth,data.selectedYear)
     }
 
     const nextYear = () => {
-      if ((allData?.year + 1) <= year) // not go forward if the selected year is same as the current year
-        setAndNotifyAllData({ ...allData, year: (allData?.year + 1) });
+      if ((allData?.selectedYear + 1) <= year) // not go forward if the selected year is same as the current year
+        setAndNotifyAllData({ ...allData, selectedYear: (allData?.selectedYear + 1) });
     }
+
 
     const nextYear_Month = () => {
       if (nextMonthIndex >= 12)
-        setAndNotifyAllData({ ...allData, month: 'January', year: (allData?.year + 1) });
+        setAndNotifyAllData({ ...allData, selectedMonth: 'January', selectedYear: (allData?.selectedYear + 1) });
       else {
-        if (allData?.year == year) {
+        if (allData?.selectedYear == year) {
           if (nextMonthIndex < (month))
-            setAndNotifyAllData({ ...allData, month: nextMonthName });
+            setAndNotifyAllData({ ...allData, selectedMonth: nextMonthName });
         }
         else
-          setAndNotifyAllData({ ...allData, month: nextMonthName })
+          setAndNotifyAllData({ ...allData, selectedMonth: nextMonthName })
       }
     }
 
     const nextYear_Month_Day = () => {    
-      if (allData?.year == year) {
+      if (allData?.selectedYear == year) {
         if (nextMonthIndex == month) {
-          if (allData?.date < date) 
-                setAndNotifyAllData({ ...allData, date: (allData?.date + 1), day: nextDayNameOfWeek });
+          if (allData?.selectedDate < date) 
+                setAndNotifyAllData({ ...allData, selectedDate: (allData?.date + 1), selectedDay: nextDayNameOfWeek });
         }
         else if (nextMonthIndex < month) 
         handleMonthsLastDay();
@@ -67,14 +79,14 @@ export default function Header({ page, data,onInfo}) {
     }
      // child function
     const handleMonthsLastDay=()=>{
-      if (daysOfMonth(allData?.month, allData?.year) == allData?.date) {
-        if (allData?.month == 'December') 
-          setAndNotifyAllData({ ...allData, date: 1, day: nextDayNameOfWeek, month: 'January', year: allData?.year + 1 });
+      if (daysOfMonth(allData?.selectedMonth, allData?.selectedDate) == allData?.selectedDate) {
+        if (allData?.selectedMonth == 'December') 
+          setAndNotifyAllData({ ...allData, selectedDate: 1, selectedDay: nextDayNameOfWeek, selectedMonth: 'January', selectedYear: allData?.selectedYear + 1 });
         else 
-          setAndNotifyAllData({ ...allData, date: 1, day: nextDayNameOfWeek, month: nextMonthName });
+          setAndNotifyAllData({ ...allData, selectedDate: 1, selectedDay: nextDayNameOfWeek, selectedMonth: nextMonthName });
       }
       else 
-        setAndNotifyAllData({ ...allData, date: (allData?.date + 1), day: nextDayNameOfWeek });
+        setAndNotifyAllData({ ...allData, selectedDate: (allData?.selectedDate + 1), selectedDay: nextDayNameOfWeek });
     }
 
     if (page == CALENDER_YEAR)
@@ -88,48 +100,49 @@ export default function Header({ page, data,onInfo}) {
 
   // Function call on previous button
   const changeBack_Date_year_month_day = () => {
-    const currentDayIndex = indexOfDay(allData?.day);
-    const currentMonthIndex = indexOfMonth(allData?.month);
+    const currentDayIndex = indexOfDay(allData?.selectedDay);
+    const currentMonthIndex = indexOfMonth(allData?.selectedMonth);
     const previousDayIndex = (currentDayIndex === 0) ? 6 : (currentDayIndex - 1);
     const previousMonth = monthnameOfYear(currentMonthIndex - 1);
 
     // set actual data
     const setAndNotifyAllData = (data) => {
       setAllData(data);
-      onInfo(data);
+      handleDispatch(data.selectedDate,data.selectedDay,data.selectedMonth,data.selectedYear)
+      
     }
 
     // previous button to select previous year 
     const previousYear = () => {
-      if ((allData?.year - 1) >= 2014)
-        setAndNotifyAllData({ ...allData, year: (allData?.year - 1) });
+      if ((allData?.selectedYear - 1) >= 2014)
+        setAndNotifyAllData({ ...allData, selectedYear: (allData?.selectedYear - 1) });
     }
 
     // previous button to select previous year and month
     const previousYear_Month = () => {
       if (currentMonthIndex <= 0) {
-        if ((allData?.year - 1 >= 2014))
-          setAndNotifyAllData({ ...allData, month: 'December', year: (allData?.year - 1) });
+        if ((allData?.selectedYear - 1 >= 2014))
+          setAndNotifyAllData({ ...allData, selectedMonth: 'December', selectedYear: (allData?.selectedYear - 1) });
       }
       else
-        setAndNotifyAllData({ ...allData, month: previousMonth });
+        setAndNotifyAllData({ ...allData, selectedMonth: previousMonth });
     }
 
     // previous button to select previous year, month and day, date
     const previousYear_Month_day = () => {
       const previousDay = daynameOfWeek(previousDayIndex);
-      if (allData?.date <= 1) {
+      if (allData?.selectedDate <= 1) {
         if (currentMonthIndex <= 0) {
-          if ((allData?.year - 1 >= 2014))
-            setAndNotifyAllData({ ...allData, year: (allData?.year - 1), date: daysOfMonth('December', allData?.year), month: 'December', day: previousDay });
+          if ((allData?.selectedYear - 1 >= 2014))
+            setAndNotifyAllData({ ...allData, selectedYear: (allData?.selectedYear - 1), selectedDate: daysOfMonth('December', allData?.selectedYear), selectedMonth: 'December', selectedDay: previousDay });
         }
         else {
           const month = previousMonth;
-          setAndNotifyAllData({ ...allData, date: daysOfMonth(month, allData?.year), month: previousMonth, day: previousDay })
+          setAndNotifyAllData({ ...allData, selectedDate: daysOfMonth(month, allData?.selectedYear), selectedMonth: previousMonth, selectedDay: previousDay })
         }
       }
       else
-        setAndNotifyAllData({ ...allData, date: allData?.date - 1, day: previousDay })
+        setAndNotifyAllData({ ...allData, selectedDate: allData?.selectedDate - 1, selectedDay: previousDay })
     }
 
 
@@ -170,12 +183,12 @@ export default function Header({ page, data,onInfo}) {
               </View>
               <View style={styles.dateMainView}>
                 <View style={styles.dateSubView}>
-                  <Text style={styles.text}>{allData?.month} </Text>
-                  <Text style={styles.text}>{allData?.date}, </Text>
-                  <Text style={styles.text}>{allData?.year}</Text>
+                  <Text style={styles.text}>{allData?.selectedMonth} </Text>
+                  <Text style={styles.text}>{allData?.selectedDate}, </Text>
+                  <Text style={styles.text}>{allData?.selectedYear}</Text>
                 </View>
                 <View style={styles.dayView}>
-                  <Text style={[styles.text, { fontSize: 25 }]}>{allData?.day}</Text>
+                  <Text style={[styles.text, { fontSize: 25 }]}>{allData?.selectedDay}</Text>
                 </View>
               </View>
               <View style={styles.buttonView}>
@@ -213,10 +226,10 @@ export default function Header({ page, data,onInfo}) {
               </View>
               <View style={styles.dateMainView}>
                 <View style={styles.dateSubView}>
-                  <Text style={[styles.text, page == 'CalenderWithYear' && { fontSize: 35 }]}>{allData?.year}</Text>
+                  <Text style={[styles.text, page == 'CalenderWithYear' && { fontSize: 35 }]}>{allData?.selectedYear}</Text>
                 </View>
                 <View style={styles.dayView}>
-                  {page == 'CalenderWithMonth_Year' && <Text style={[styles.text, { fontSize: 30 }]}>{allData?.month}</Text>}
+                  {page == 'CalenderWithMonth_Year' && <Text style={[styles.text, { fontSize: 30 }]}>{allData?.selectedMonth}</Text>}
                 </View>
               </View>
               <View style={styles.buttonView}>
