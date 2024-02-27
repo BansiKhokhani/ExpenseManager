@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import { Button, SafeAreaView, StyleSheet, Modal, View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity } from 'react-native'
 import Colors from '../../Constants/Colors';
 import Toast from 'react-native-simple-toast';
+import { generateUniqueId } from '../Helper';
 const { width } = Dimensions.get("window");
 
 
@@ -26,17 +27,18 @@ const AddNewItem = ({ isShowCustomComponent, onData }) => {
         }
         else if (inputDetail.length <= 0)
         {
-            Toast.show('Please Enter the Detail.', Toast.LONG);
+            Toast.show('Please Enter the Detail.');
             textInputDetailRef.current.focus();
         }
         else if (inputPrice == null)
         {
-            Toast.show('Please Enter the price.', Toast.LONG,);
+            Toast.show('Please Enter the price.');
             textInputPriceRef.current.focus();
         }
         else {
-            Toast.show('Added!', Toast.LONG,);
-            const data = { inputDetail, inputPrice };
+            Toast.show('Added!');
+            const uniqueId=generateUniqueId();
+            const data = { inputDetail, inputPrice,uniqueId};
             onData(data);
             setinputDetail("");
             setinputPrice();
@@ -74,8 +76,8 @@ const AddNewItem = ({ isShowCustomComponent, onData }) => {
 
                         {/** This button is responsible to close the modal */}
                         <View style={styles.buttonView}>
-                            <TouchableOpacity onPress={sendDataToParent} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>ADD</Text></TouchableOpacity>
-                            <TouchableOpacity onPress={toggleModalVisibility} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>CANCEL</Text></TouchableOpacity>
+                            <TouchableOpacity activeOpacity={1} onPress={sendDataToParent} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>ADD</Text></TouchableOpacity>
+                            <TouchableOpacity activeOpacity={1} onPress={toggleModalVisibility} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>CANCEL</Text></TouchableOpacity>
                         </View>
 
                     </View>

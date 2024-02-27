@@ -8,7 +8,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateselected_Date_Month_Year } from '../Redux/Action';
 
-export default function Header({ page}) {
+export default function Header({ page,isIncomeExpense}) {
   const dispatch = useDispatch();
   const initialData=useSelector(state => state.selectedDateMonthYearReducer);  //get data from redux
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);   //value= 'income or 'expense
@@ -25,6 +25,7 @@ export default function Header({ page}) {
     handleDispatch(date,dayOfWeek,monthOfYear,year);
     setAllData({selectedDate:date,selectedDay:dayOfWeek,selectedMonth:monthOfYear,selectedYear:year}); //set today date, month, year, day on screen change
     setIsIncomeOrExpense(EXPENSE)
+    isIncomeExpense(EXPENSE)
   },[isFocused])
 
   // used useEffact to setAllData when TODAY page not focused
@@ -69,7 +70,7 @@ export default function Header({ page}) {
       if (allData?.selectedYear == year) {
         if (nextMonthIndex == month) {
           if (allData?.selectedDate < date) 
-                setAndNotifyAllData({ ...allData, selectedDate: (allData?.date + 1), selectedDay: nextDayNameOfWeek });
+                setAndNotifyAllData({ ...allData, selectedDate: (allData?.selectedDate + 1), selectedDay: nextDayNameOfWeek });
         }
         else if (nextMonthIndex < month) 
         handleMonthsLastDay();
@@ -158,14 +159,16 @@ export default function Header({ page}) {
 
   const selectType = (value) => {
     setIsIncomeOrExpense(value);
+    isIncomeExpense(value);
   }
 
   // const d={
   //   2024:{
   //     January:{ 
-  //       1:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],2:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],2:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],2:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}]}},
-
-  //   }
+  //       1:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],2:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}]},
+  //      february:{
+  //       2[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],4:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}]}},
+  
   // }
 
   return (

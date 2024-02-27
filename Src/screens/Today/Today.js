@@ -1,33 +1,54 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View,TouchableOpacity, StyleSheet,FlatList } from 'react-native';
 import Header from '../../Components/Header/Header';
 import AddNewItem from '../../Components/AddNewItems/AddNewItem';
 import Colors from '../../Constants/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent';
-import { dayOfWeek ,date,monthOfYear,year, } from '../../Components/Helper';
-import { CALENDER_YEAR_MONTH_DAY, TODAY } from '../../Components/constants';
+import { dayOfWeek ,date,monthOfYear,year } from '../../Components/Helper';
+import { CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME, TODAY } from '../../Components/constants';
+import { useDispatch ,useSelector} from 'react-redux';
+import { addExpense, addIncome} from '../../Components/Redux/Action';
 
-export default function Today({navigation}) {
+export default function Today() {
+  const dispatch=useDispatch();
+  const todayExpenseData=useSelector(state=>state.expenseReducer[year]?.[monthOfYear]?.[date]);
+  const todayIncomeData=useSelector(state=>state.incomeReducer[year]?.[monthOfYear]?.[date]);
   const [showCustomComponent, setShowCustomComponent] = useState(false);
-  const [data,setData]=useState([]);
+  const [data,setData]=useState();
+  const [isIncomeOrExpense,setIsIncomeOrExpense]=useState(EXPENSE);
+
+
+  useEffect(()=>{
+    if(isIncomeOrExpense==EXPENSE)
+        setData(todayExpenseData);
+    else 
+        setData(todayIncomeData);
+    
+  },[todayExpenseData,todayIncomeData,isIncomeOrExpense]);
+
+  
+
 
   // Used to call this function AddButtonComponentButton pressed by user
   const handleButtonPress = (value) => {
     setShowCustomComponent(value)
   }
   const handleChildData=(value)=>{
-     setData([...data,{inputDetail:value.inputDetail,inputPrice:(parseFloat(value.inputPrice)).toFixed(2)}]);
+    const details={inputDetail:value.inputDetail,inputPrice:(parseFloat(value.inputPrice)).toFixed(2),uniqueId:value.uniqueId};
+    if(isIncomeOrExpense==EXPENSE)
+      dispatch(addExpense(year, monthOfYear, date, details));
+    else
+      dispatch(addIncome(year, monthOfYear, date, details));
     
-  }
+  } 
   const renderItem=({item})=>(
-    console.log(item),
     <ProductComponent data={item}/>
   )
 
   return (
     <View style={styles.mainView}>
-      <Header page={TODAY} data={{ date: date, month: monthOfYear, year: year, day: dayOfWeek }} onInfo={(value)=>{}}></Header>
+      <Header page={TODAY}  isIncomeExpense={(value)=>{setIsIncomeOrExpense(value)}}></Header>
       <View style={{ flex: 1 }}>
         {
           showCustomComponent && (

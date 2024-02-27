@@ -1,3 +1,5 @@
+import uuid from 'react-native-uuid';
+
 // Get the current date, month, and year.........................................
 const currentDate = new Date();
 export const date = currentDate.getDate(); // Get the day of the month (1-31)
@@ -46,7 +48,6 @@ export const daysOfMonth=(month,year)=>
 
 //used to call on days display as per month
 export const daysOfMonthData=(currentMonth,currentYear)=>{
-    console.log(currentMonth);
     const numberOfDays=daysOfMonth(currentMonth,currentYear);
     const monthindex=(indexOfMonth(currentMonth)+1)
     const data=[];
@@ -64,4 +65,11 @@ export const daysOfMonthData=(currentMonth,currentYear)=>{
     }
    
     return data;
+}
+
+//Generate unique id 
+export const generateUniqueId=()=>{
+     const uid=uuid.v4();
+    return uid;
+    
 }

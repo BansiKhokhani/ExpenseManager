@@ -7,15 +7,19 @@ import { CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../
 import { dayOfWeek, date, monthOfYear, year, month } from '../../Components/Helper';
 import { useIsFocused } from '@react-navigation/native';
 import DaysComponent from '../../Components/DaysComponent/DaysComponent'
-import { UseSelector, useSelector } from 'react-redux'
+import { useSelector,useDispatch} from 'react-redux'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AddNewItem from '../../Components/AddNewItems/AddNewItem';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent'
 import { daysOfMonthData } from '../../Components/Helper'
-
+import { EXPENSE ,INCOME} from '../../Components/constants'
+import { addExpense, addIncome} from '../../Components/Redux/Action';
 
 export default function Calender() {
   const initialdata = useSelector(state => state.selectedDateMonthYearReducer)
+  const dispatch=useDispatch();
+  const todayExpenseData=useSelector(state=>state.expenseReducer[initialdata.selectedYear]?.[initialdata.selectedMonth]?.[initialdata.selectedDate]);
+  const todayIncomeData=useSelector(state=>state.incomeReducer[initialdata.selectedYear]?.[initialdata.selectedMonth]?.[initialdata.selectedDate]);
   const [selectedYear, setSelectedYear] = useState(initialdata.selectedYear);     // cureent selected year in app
   const [selectedPageMode, setSelectedPageMode] = useState(CALENDER_YEAR);
   const [isMonthSelected, setIsMonthSelected] = useState(false);
@@ -24,14 +28,31 @@ export default function Calender() {
   const [showCustomComponent, setShowCustomComponent] = useState(false);
   const [numberOfDaysOfMonth,setNumberOfDaysOfMonth]=useState(null);
   const [productData,setproductData]=useState([]);
+  const [isIncomeOrExpense,setIsIncomeOrExpense]=useState(EXPENSE);
+
+
+
+  useEffect(()=>{
+    if(isIncomeOrExpense==EXPENSE)
+      setproductData(todayExpenseData);
+    else 
+      setproductData(todayIncomeData);
+    
+  },[todayExpenseData,todayIncomeData,isIncomeOrExpense]);
+
+
   // Used to call this function AddButtonComponentButton pressed by user
   const handleButtonPress = (value) => {
     setShowCustomComponent(value)
   }
 
+
   const handleChildData=(value)=>{
-    setproductData([...productData,{inputDetail:value.inputDetail,inputPrice:(parseFloat(value.inputPrice)).toFixed(2)}]);
-   
+    const details={inputDetail:value.inputDetail,inputPrice:(parseFloat(value.inputPrice)).toFixed(2),uniqueId:value.uniqueId};
+    if(isIncomeOrExpense==EXPENSE)
+      dispatch(addExpense(initialdata.selectedYear, initialdata.selectedMonth,initialdata.selectedDate, details));
+    else
+      dispatch(addIncome(initialdata.selectedYear, initialdata.selectedMonth,initialdata.selectedDate, details));
  }
   //called when screen isfocused
   useEffect(() => {
@@ -61,7 +82,6 @@ export default function Calender() {
   ];
 
   const renderItem=({item})=>(
-    console.log(item),
     <ProductComponent data={item}/>
   )
 
@@ -75,7 +95,7 @@ export default function Calender() {
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.pageBackgroundColor }}>
-      <Header page={selectedPageMode} ></Header>
+      <Header page={selectedPageMode} isIncomeExpense={(value)=>{setIsIncomeOrExpense(value)}}></Header>
       {selectedPageMode == CALENDER_YEAR &&
         <View style={{ flex: 1, marginTop: 5 }}>
           <FlatList

@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../../Constants/Colors';
-import { UseSelector,useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector } from 'react-redux';
 import { updateselected_Date_Month_Year } from '../Redux/Action';
 
 const DaysComponent = ({ item,isPress}) => {

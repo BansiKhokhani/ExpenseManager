@@ -10,7 +10,6 @@ const initialState = {
   };
 
   export const selectedDateMonthYearReducer=(state = initialState, action)=>{
-    //console.log("....."+action)
     switch (action.type) {
         case UPDATE_SELECTED_DATE_MONTH_YEAR:
           return {
