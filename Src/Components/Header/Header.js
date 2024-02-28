@@ -1,39 +1,40 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StatusBar, TouchableOpacity, StyleSheet } from 'react-native'
 import Colors from '../../Constants/Colors'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY,EXPENSE,INCOME } from '../constants';
-import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date ,monthOfYear,dayOfWeek} from '../Helper';
+import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME } from '../constants';
+import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date, monthOfYear, dayOfWeek } from '../Helper';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateselected_Date_Month_Year } from '../Redux/Action';
 
-export default function Header({ page,isIncomeExpense}) {
+export default function Header({ page, isIncomeExpense }) {
   const dispatch = useDispatch();
-  const initialData=useSelector(state => state.selectedDateMonthYearReducer);  //get data from redux
+  const initialData = useSelector(state => state.selectedDateMonthYearReducer);  //get data from redux
+  const expenseData = useSelector(state => state.expenseReducer);
+  const incomeData=useSelector(state=>state.incomeReducer);
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);   //value= 'income or 'expense
   const [allData, setAllData] = useState(initialData);  // set redux data
   const isFocused = useIsFocused();
- 
   // dispatch data 
-  const handleDispatch=(selectedDate,selectedDay,selectedMonth,selectedYear)=>{
-    dispatch(updateselected_Date_Month_Year(selectedDate,selectedDay,selectedMonth,selectedYear))
+  const handleDispatch = (selectedDate, selectedDay, selectedMonth, selectedYear) => {
+    dispatch(updateselected_Date_Month_Year(selectedDate, selectedDay, selectedMonth, selectedYear))
   }
- 
+
   //used useEffact to reset with initial value when screen gain the focus
-  useEffect(()=>{
-    handleDispatch(date,dayOfWeek,monthOfYear,year);
-    setAllData({selectedDate:date,selectedDay:dayOfWeek,selectedMonth:monthOfYear,selectedYear:year}); //set today date, month, year, day on screen change
+  useEffect(() => {
+    handleDispatch(date, dayOfWeek, monthOfYear, year);
+    setAllData({ selectedDate: date, selectedDay: dayOfWeek, selectedMonth: monthOfYear, selectedYear: year }); //set today date, month, year, day on screen change
     setIsIncomeOrExpense(EXPENSE)
     isIncomeExpense(EXPENSE)
-  },[isFocused])
+  }, [isFocused])
 
   // used useEffact to setAllData when TODAY page not focused
-  useEffect(()=>{
-    if(page!=TODAY)
+  useEffect(() => {
+    if (page != TODAY)
       setAllData(initialData)
-  },[initialData])
- 
+  }, [initialData])
+
   // Function call on Next button
   const changeForward_Date_year_month_day = () => {
     const nextMonthIndex = indexOfMonth(allData?.selectedMonth) + 1;
@@ -42,9 +43,9 @@ export default function Header({ page,isIncomeExpense}) {
     const nextDayNameOfWeek = daynameOfWeek(nextDayIndex);
 
     const setAndNotifyAllData = (data) => {
-      
+
       setAllData(data);
-      handleDispatch(data.selectedDate,data.selectedDay,data.selectedMonth,data.selectedYear)
+      handleDispatch(data.selectedDate, data.selectedDay, data.selectedMonth, data.selectedYear)
     }
 
     const nextYear = () => {
@@ -66,27 +67,27 @@ export default function Header({ page,isIncomeExpense}) {
       }
     }
 
-    const nextYear_Month_Day = () => {    
+    const nextYear_Month_Day = () => {
       if (allData?.selectedYear == year) {
         if (nextMonthIndex == month) {
-          if (allData?.selectedDate < date) 
-                setAndNotifyAllData({ ...allData, selectedDate: (allData?.selectedDate + 1), selectedDay: nextDayNameOfWeek });
+          if (allData?.selectedDate < date)
+            setAndNotifyAllData({ ...allData, selectedDate: (allData?.selectedDate + 1), selectedDay: nextDayNameOfWeek });
         }
-        else if (nextMonthIndex < month) 
-        handleMonthsLastDay();
+        else if (nextMonthIndex < month)
+          handleMonthsLastDay();
       }
-      else 
-      handleMonthsLastDay();
+      else
+        handleMonthsLastDay();
     }
-     // child function
-    const handleMonthsLastDay=()=>{
+    // child function
+    const handleMonthsLastDay = () => {
       if (daysOfMonth(allData?.selectedMonth, allData?.selectedDate) == allData?.selectedDate) {
-        if (allData?.selectedMonth == 'December') 
+        if (allData?.selectedMonth == 'December')
           setAndNotifyAllData({ ...allData, selectedDate: 1, selectedDay: nextDayNameOfWeek, selectedMonth: 'January', selectedYear: allData?.selectedYear + 1 });
-        else 
+        else
           setAndNotifyAllData({ ...allData, selectedDate: 1, selectedDay: nextDayNameOfWeek, selectedMonth: nextMonthName });
       }
-      else 
+      else
         setAndNotifyAllData({ ...allData, selectedDate: (allData?.selectedDate + 1), selectedDay: nextDayNameOfWeek });
     }
 
@@ -109,8 +110,8 @@ export default function Header({ page,isIncomeExpense}) {
     // set actual data
     const setAndNotifyAllData = (data) => {
       setAllData(data);
-      handleDispatch(data.selectedDate,data.selectedDay,data.selectedMonth,data.selectedYear)
-      
+      handleDispatch(data.selectedDate, data.selectedDay, data.selectedMonth, data.selectedYear)
+
     }
 
     // previous button to select previous year 
@@ -162,14 +163,38 @@ export default function Header({ page,isIncomeExpense}) {
     isIncomeExpense(value);
   }
 
-  // const d={
-  //   2024:{
-  //     January:{ 
-  //       1:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],2:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}]},
-  //      february:{
-  //       2[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}],4:[{inputdetail:'grocery',inputPrice:10.00},{inputdetail:'grocery',inputPrice:10.00}]}},
-  
-  // }
+  const handletotalCalculation = (incomeExpenseData) => {
+    let totalexpense = 0;
+    if (page == TODAY || page === CALENDER_YEAR_MONTH_DAY) {
+      const data = incomeExpenseData?.[allData?.selectedYear]?.[allData?.selectedMonth]?.[allData?.selectedDate];
+      data?.filter(item => {
+        totalexpense += parseInt(item.inputPrice)
+      })
+    }
+    else if (page === CALENDER_YEAR_MONTH) {
+      const data = incomeExpenseData?.[allData?.selectedYear]?.[allData?.selectedMonth];
+      for (const key in data) {
+        data[key]?.filter(item => {
+          totalexpense += parseInt(item.inputPrice)
+        })
+      }
+    }
+    else
+    {
+      const data = incomeExpenseData?.[allData?.selectedYear];
+      for (const key in data) {
+        for(const dateKey in data[key])
+        {
+          data[key][dateKey]?.filter(item => {
+            totalexpense += parseInt(item.inputPrice)
+          })
+        }
+        
+      }
+      
+    }
+    return (parseFloat(totalexpense)).toFixed(2);
+  }
 
   return (
     <>
@@ -182,7 +207,7 @@ export default function Header({ page,isIncomeExpense}) {
           <View style={styles.mainView}>
             <View style={styles.calenderMainView} >
               <View style={styles.buttonView}>
-               { page!=TODAY&&<TouchableOpacity activeOpacity={1} onPress={changeBack_Date_year_month_day}><AntDesign name="caretleft" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>}
+                {page != TODAY && <TouchableOpacity activeOpacity={1} onPress={changeBack_Date_year_month_day}><AntDesign name="caretleft" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>}
               </View>
               <View style={styles.dateMainView}>
                 <View style={styles.dateSubView}>
@@ -195,12 +220,12 @@ export default function Header({ page,isIncomeExpense}) {
                 </View>
               </View>
               <View style={styles.buttonView}>
-                {page!=TODAY&&<TouchableOpacity activeOpacity={1} onPress={page == CALENDER_YEAR_MONTH_DAY ? changeForward_Date_year_month_day : () => ''}><AntDesign name="caretright" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>}
+                {page != TODAY && <TouchableOpacity activeOpacity={1} onPress={page == CALENDER_YEAR_MONTH_DAY ? changeForward_Date_year_month_day : () => ''}><AntDesign name="caretright" size={45} color={Colors.whitetextcolor} /></TouchableOpacity>}
               </View>
             </View>
             <View style={styles.showincomeExpensePriceView}>
               <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ? EXPENSE : INCOME}</Text>
-              <Text style={styles.text}>0.00</Text>
+              <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ?handletotalCalculation(expenseData):handletotalCalculation(incomeData)}</Text>
             </View>
 
             <View style={styles.incomeExpenseTabView}>
@@ -241,13 +266,13 @@ export default function Header({ page,isIncomeExpense}) {
             </View>
             <View style={styles.showincomeExpensePriceView}>
               <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ? EXPENSE : INCOME}</Text>
-              <Text style={styles.text}>0.00</Text>
+              <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ?handletotalCalculation(expenseData):handletotalCalculation(incomeData)}</Text>
             </View>
 
             <View style={styles.incomeExpenseTabView}>
               <View style={{ paddingRight: 80 }}>
                 <TouchableOpacity activeOpacity={1} onPress={() => { selectType(EXPENSE) }}>
-                  <View><Text style={[isIncomeOrExpense ==EXPENSE ? styles.selectedtype : styles.unSelectedTYpe]}>EXPENSE</Text></View>
+                  <View><Text style={[isIncomeOrExpense == EXPENSE ? styles.selectedtype : styles.unSelectedTYpe]}>EXPENSE</Text></View>
                 </TouchableOpacity>
               </View>
               <View>

@@ -67,18 +67,18 @@ export default function Calender() {
   }, [initialdata])
 
   const data = [
-    { id: '1', monthName: 'January', amount: '0.00' },
-    { id: '2', monthName: 'February', amount: '0.00' },
-    { id: '3', monthName: 'March', amount: '0.00' },
-    { id: '4', monthName: 'April', amount: '0.00' },
-    { id: '5', monthName: 'May', amount: '0.00' },
-    { id: '6', monthName: 'June', amount: '0.00' },
-    { id: '7', monthName: 'July', amount: '0.00' },
-    { id: '8', monthName: 'August', amount: '0.00' },
-    { id: '9', monthName: 'September', amount: '0.00' },
-    { id: '10', monthName: 'October', amount: '0.00' },
-    { id: '11', monthName: 'November', amount: '0.00' },
-    { id: '12', monthName: 'December', amount: '0.00' },
+    { id: '1', monthName: 'January'},
+    { id: '2', monthName: 'February'},
+    { id: '3', monthName: 'March'},
+    { id: '4', monthName: 'April'},
+    { id: '5', monthName: 'May'},
+    { id: '6', monthName: 'June'},
+    { id: '7', monthName: 'July' },
+    { id: '8', monthName: 'August'},
+    { id: '9', monthName: 'September'},
+    { id: '10', monthName: 'October'},
+    { id: '11', monthName: 'November'},
+    { id: '12', monthName: 'December',},
   ];
 
   const renderItem=({item})=>(
@@ -87,7 +87,7 @@ export default function Calender() {
 
 
   const renderMonthComponent = ({ item }) => (
-    <MonthComponent monthName={item.monthName} amount={item.amount} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH)}} />
+    <MonthComponent monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH)}} />
   );
   const renderDaysComponent = ({ item }) => (
     <DaysComponent item={item} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY) }} />
