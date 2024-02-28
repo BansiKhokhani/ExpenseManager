@@ -6,7 +6,7 @@ import Colors from '../../Constants/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent';
 import { dayOfWeek ,date,monthOfYear,year } from '../../Components/Helper';
-import { CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME, TODAY } from '../../Components/constants';
+import { ADD, CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME, TODAY } from '../../Components/constants';
 import { useDispatch ,useSelector} from 'react-redux';
 import { addExpense, addIncome} from '../../Components/Redux/Action';
 
@@ -43,7 +43,7 @@ export default function Today() {
     
   } 
   const renderItem=({item})=>(
-    <ProductComponent data={item}/>
+    <ProductComponent data={item} isIncomeExpense={isIncomeOrExpense}/>
   )
 
   return (
@@ -52,7 +52,7 @@ export default function Today() {
       <View style={{ flex: 1 }}>
         {
           showCustomComponent && (
-            <AddNewItem isShowCustomComponent={handleButtonPress} onData={handleChildData}/>
+            <AddNewItem isShowCustomComponent={handleButtonPress} itemType={ADD} onData={handleChildData} editData={null}/>
           )
         }
         <FlatList showsVerticalScrollIndicator={false} data={data} renderItem={renderItem} style={{ flex: 1, marginTop: 5 }}></FlatList>

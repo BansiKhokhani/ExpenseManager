@@ -16,3 +16,7 @@ export const CALENDER_YEAR='CalenderWithYear';
 // EXPENSE , INCOME CONSTANT
 export const EXPENSE='Expense';
 export const INCOME='Income';
+
+//EDIT or ADD
+export const ADD='ADD';
+export const EDIT='EDIT';

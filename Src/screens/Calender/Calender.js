@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import Header from '../../Components/Header/Header'
 import Colors from '../../Constants/Colors'
 import MonthComponent from '../../Components/MonthComponent/MonthComponent'
-import { CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../../Components/constants';
+import {ADD, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../../Components/constants';
 import { dayOfWeek, date, monthOfYear, year, month } from '../../Components/Helper';
 import { useIsFocused } from '@react-navigation/native';
 import DaysComponent from '../../Components/DaysComponent/DaysComponent'
@@ -82,7 +82,7 @@ export default function Calender() {
   ];
 
   const renderItem=({item})=>(
-    <ProductComponent data={item}/>
+    <ProductComponent data={item} isIncomeExpense={isIncomeOrExpense}/>
   )
 
 
@@ -117,7 +117,7 @@ export default function Calender() {
         <View style={{ flex: 1 }}>
           {
             showCustomComponent && (
-              <AddNewItem isShowCustomComponent={handleButtonPress} onData={handleChildData} />
+              <AddNewItem isShowCustomComponent={handleButtonPress} itemType={ADD} onData={handleChildData} editData={null}/>
             )
           }
           <FlatList showsVerticalScrollIndicator={false} data={productData} renderItem={renderItem} style={{ flex: 1, marginTop: 5 }}></FlatList>
