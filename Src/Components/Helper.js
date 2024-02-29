@@ -73,3 +73,17 @@ export const generateUniqueId=()=>{
     return uid;
     
 }
+
+//convert to localString
+export const convertToLocalString=(value)=>{
+    return (parseFloat(value,10)).toLocaleString(undefined,{minimumFractionDigits:2});
+}
+
+//convert to normalString i.e., remove comma 
+export const convertToNormalNumber=(value)=>{
+   return (parseFloat((value)?.replace(/[^0-9.-]+/g, "").substring(0, 10)));
+}
+//convert to normal string i.e., remove comma , return string value
+export const convertToNormalNumberString=(value)=>{
+    return (value)?.replace(/[^0-9.-]+/g,"").substring(0, 10);
+}

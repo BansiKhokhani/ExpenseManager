@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Button, SafeAreaView, StyleSheet, Modal, View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity, Keyboard } from 'react-native'
 import Colors from '../../Constants/Colors';
 import Toast from 'react-native-simple-toast';
-import { generateUniqueId } from '../Helper';
+import { convertToNormalNumberString, generateUniqueId } from '../Helper';
 import { ADD, EDIT } from './../constants'
 const { width } = Dimensions.get("window");
 
@@ -12,11 +12,11 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
     const textInputPriceRef = useRef(null);
     const [isModalVisible, setModalVisible] = useState(true);
     const [inputDetail, setinputDetail] = useState("");
-    const [inputPrice, setinputPrice] = useState();
+    const [inputPrice, setinputPrice] = useState("");
 
     useEffect(() => {
         setinputDetail(editData?.inputDetail);
-        setinputPrice(editData?.inputPrice);
+        setinputPrice(convertToNormalNumberString(editData?.inputPrice));//hello
     }, [editData])
 
     const toggleModalVisibility = () => {
@@ -38,10 +38,13 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
             textInputPriceRef.current.focus();
         }
         else {
+           
             Toast.show(itemType == ADD ? 'Added!' : 'Edited!');
             let uniqueId = null;
             itemType == ADD ? uniqueId = generateUniqueId() : (uniqueId = editData?.uniqueId);
+            console.log(inputPrice)
             const data = { inputDetail, inputPrice, uniqueId };
+            console.log(inputPrice)
             onData(data);
             setinputDetail("");
             setinputPrice();
@@ -77,15 +80,15 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
                                     <TextInput placeholder="Enter Price...."
                                         value={inputPrice} style={styles.textInput}
                                         keyboardType="numeric"
-                                        onChangeText={(value) => { (/^\d*\.?\d*$/.test(value)) && setinputPrice(value); }} ref={textInputPriceRef} />
+                                        onChangeText={(value) => { (/^\d*\.?\d*$/.test(value)&& value.length<=10) && setinputPrice(value); }} ref={textInputPriceRef} />
                                 </View>
                             </View>
                         </>
 
                         {/** This button is responsible to close the modal */}
                         <View style={styles.buttonView}>
-                            <TouchableOpacity activeOpacity={0} onPress={sendDataToParent} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>{itemType === ADD ? 'ADD' : 'EDIT'}</Text></TouchableOpacity>
-                            <TouchableOpacity activeOpacity={0} onPress={toggleModalVisibility} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>CANCEL</Text></TouchableOpacity>
+                            <TouchableOpacity activeOpacity={1} onPress={sendDataToParent} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>{itemType === ADD ? 'ADD' : 'EDIT'}</Text></TouchableOpacity>
+                            <TouchableOpacity activeOpacity={1} onPress={toggleModalVisibility} style={styles.touchableOpacity}><Text style={styles.touchableOpacityText}>CANCEL</Text></TouchableOpacity>
                         </View>
 
                     </View>

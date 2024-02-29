@@ -3,7 +3,7 @@ import { View, Text, StatusBar, TouchableOpacity, StyleSheet } from 'react-nativ
 import Colors from '../../Constants/Colors'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME } from '../constants';
-import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date, monthOfYear, dayOfWeek } from '../Helper';
+import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date, monthOfYear, dayOfWeek, convertToNormalNumber, convertToLocalString } from '../Helper';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateselected_Date_Month_Year } from '../Redux/Action';
@@ -12,7 +12,7 @@ export default function Header({ page, isIncomeExpense }) {
   const dispatch = useDispatch();
   const initialData = useSelector(state => state.selectedDateMonthYearReducer);  //get data from redux
   const expenseData = useSelector(state => state.expenseReducer);
-  const incomeData=useSelector(state=>state.incomeReducer);
+  const incomeData = useSelector(state => state.incomeReducer);
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);   //value= 'income or 'expense
   const [allData, setAllData] = useState(initialData);  // set redux data
   const isFocused = useIsFocused();
@@ -168,32 +168,30 @@ export default function Header({ page, isIncomeExpense }) {
     if (page == TODAY || page === CALENDER_YEAR_MONTH_DAY) {
       const data = incomeExpenseData?.[allData?.selectedYear]?.[allData?.selectedMonth]?.[allData?.selectedDate];
       data?.filter(item => {
-        totalexpense += parseInt(item.inputPrice)
+        totalexpense += convertToNormalNumber(item?.inputPrice);
       })
     }
     else if (page === CALENDER_YEAR_MONTH) {
       const data = incomeExpenseData?.[allData?.selectedYear]?.[allData?.selectedMonth];
       for (const key in data) {
         data[key]?.filter(item => {
-          totalexpense += parseInt(item.inputPrice)
+          totalexpense += convertToNormalNumber(item?.inputPrice);
         })
       }
     }
-    else
-    {
+    else {
       const data = incomeExpenseData?.[allData?.selectedYear];
       for (const key in data) {
-        for(const dateKey in data[key])
-        {
+        for (const dateKey in data[key]) {
           data[key][dateKey]?.filter(item => {
-            totalexpense += parseInt(item.inputPrice)
+            totalexpense += convertToNormalNumber(item?.inputPrice);
           })
         }
-        
+
       }
-      
+
     }
-    return (parseFloat(totalexpense)).toFixed(2);
+    return convertToLocalString(totalexpense);
   }
 
   return (
@@ -225,7 +223,7 @@ export default function Header({ page, isIncomeExpense }) {
             </View>
             <View style={styles.showincomeExpensePriceView}>
               <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ? EXPENSE : INCOME}</Text>
-              <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ?handletotalCalculation(expenseData):handletotalCalculation(incomeData)}</Text>
+              <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ? handletotalCalculation(expenseData) : handletotalCalculation(incomeData)}</Text>
             </View>
 
             <View style={styles.incomeExpenseTabView}>
@@ -266,7 +264,7 @@ export default function Header({ page, isIncomeExpense }) {
             </View>
             <View style={styles.showincomeExpensePriceView}>
               <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ? EXPENSE : INCOME}</Text>
-              <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ?handletotalCalculation(expenseData):handletotalCalculation(incomeData)}</Text>
+              <Text style={styles.text}>{isIncomeOrExpense == EXPENSE ? handletotalCalculation(expenseData) : handletotalCalculation(incomeData)}</Text>
             </View>
 
             <View style={styles.incomeExpenseTabView}>
@@ -292,8 +290,8 @@ const styles = StyleSheet.create({
 
   mainView: { alignItems: 'center' },
   calenderMainView: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.topBottomBarcolor, width: '100%', justifyContent: 'center', paddingTop: 25 },
-  buttonView: { paddingHorizontal: 10 },
-  dateMainView: { alignItems: 'center' },
+  buttonView: { },
+  dateMainView: { alignItems: 'center',width:'40%' },
   dateSubView: { flexDirection: 'row' },
   text: { color: Colors.whitetextcolor, fontWeight: 'bold', fontSize: 15 },
   dayView: { alignItems: 'center' },

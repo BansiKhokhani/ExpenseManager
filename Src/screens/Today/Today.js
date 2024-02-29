@@ -5,7 +5,7 @@ import AddNewItem from '../../Components/AddNewItems/AddNewItem';
 import Colors from '../../Constants/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent';
-import { dayOfWeek ,date,monthOfYear,year } from '../../Components/Helper';
+import { dayOfWeek ,date,monthOfYear,year, convertToLocalString } from '../../Components/Helper';
 import { ADD, CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME, TODAY } from '../../Components/constants';
 import { useDispatch ,useSelector} from 'react-redux';
 import { addExpense, addIncome} from '../../Components/Redux/Action';
@@ -35,7 +35,8 @@ export default function Today() {
     setShowCustomComponent(value)
   }
   const handleChildData=(value)=>{
-    const details={inputDetail:value.inputDetail,inputPrice:(parseFloat(value.inputPrice)).toFixed(2),uniqueId:value.uniqueId};
+    const inputPrice=convertToLocalString(value?.inputPrice);
+    const details={inputDetail:value.inputDetail,inputPrice:inputPrice,uniqueId:value.uniqueId};
     if(isIncomeOrExpense==EXPENSE)
       dispatch(addExpense(year, monthOfYear, date, details));
     else

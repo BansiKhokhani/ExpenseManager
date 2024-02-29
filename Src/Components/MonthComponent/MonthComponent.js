@@ -4,7 +4,7 @@ import Colors from '../../Constants/Colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateselected_Date_Month_Year } from '../Redux/Action';
 import { EXPENSE } from '../constants';
-
+import {convertToNormalNumber} from '../Helper'
 
 const MonthComponent = ({ monthName, isIncomeOrExpense,isPress }) => {
   const dispatch = useDispatch();
@@ -26,11 +26,11 @@ const MonthComponent = ({ monthName, isIncomeOrExpense,isPress }) => {
     const data = incomeExpenseData?.[selectedYear]?.[monthName];
     for (const key in data) {
       data[key]?.filter(item => {
-        totalexpense += parseInt(item.inputPrice)
+            totalexpense += convertToNormalNumber(item?.inputPrice);
       })
     }
 
-    return (parseFloat(totalexpense)).toFixed(2);
+    return (parseFloat(totalexpense,10)).toLocaleString(undefined,{minimumFractionDigits:2});
   }
 
 

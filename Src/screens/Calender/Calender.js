@@ -4,7 +4,7 @@ import Header from '../../Components/Header/Header'
 import Colors from '../../Constants/Colors'
 import MonthComponent from '../../Components/MonthComponent/MonthComponent'
 import {ADD, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY } from '../../Components/constants';
-import { dayOfWeek, date, monthOfYear, year, month } from '../../Components/Helper';
+import { dayOfWeek, date, monthOfYear, year, month, convertToLocalString } from '../../Components/Helper';
 import { useIsFocused } from '@react-navigation/native';
 import DaysComponent from '../../Components/DaysComponent/DaysComponent'
 import { useSelector,useDispatch} from 'react-redux'
@@ -48,7 +48,8 @@ export default function Calender() {
 
 
   const handleChildData=(value)=>{
-    const details={inputDetail:value.inputDetail,inputPrice:(parseFloat(value.inputPrice)).toFixed(2),uniqueId:value.uniqueId};
+    const inputPrice=convertToLocalString(value?.inputPrice);
+    const details={inputDetail:value.inputDetail,inputPrice:inputPrice,uniqueId:value.uniqueId};
     if(isIncomeOrExpense==EXPENSE)
       dispatch(addExpense(initialdata.selectedYear, initialdata.selectedMonth,initialdata.selectedDate, details));
     else
