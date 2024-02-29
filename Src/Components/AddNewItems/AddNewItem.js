@@ -49,11 +49,12 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
             setinputDetail("");
             setinputPrice();
             textInputDetailRef.current.focus();
+            if (itemType == EDIT) {
+                setModalVisible(!isModalVisible),
+                    isShowCustomComponent(!isModalVisible)
+            }
         }
-        if (itemType == EDIT) {
-            setModalVisible(!isModalVisible),
-                isShowCustomComponent(!isModalVisible)
-        }
+       
 
     }
 

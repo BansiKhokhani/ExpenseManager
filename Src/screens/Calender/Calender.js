@@ -88,7 +88,7 @@ export default function Calender() {
 
 
   const renderMonthComponent = ({ item }) => (
-    <MonthComponent monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH)}} />
+    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH)}} />
   );
   const renderDaysComponent = ({ item }) => (
     <DaysComponent item={item} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY) }} />
