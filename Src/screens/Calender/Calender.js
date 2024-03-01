@@ -13,7 +13,7 @@ import AddNewItem from '../../Components/AddNewItems/AddNewItem';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent'
 import { daysOfMonthData } from '../../Components/Helper'
 import { EXPENSE, INCOME } from '../../Components/constants'
-import { addExpense, addIncome } from '../../Components/Redux/Action';
+import { addExpense, addIncome ,updateExpense,updateIncome} from '../../Components/Redux/Action';
 
 export default function Calender() {
   const initialdata = useSelector(state => state.selectedDateMonthYearReducer)

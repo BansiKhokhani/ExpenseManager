@@ -26,9 +26,10 @@ export default function Header({ page, isIncomeExpense }) {
     if (page == TODAY) {
       setAllData({ selectedDate: date, selectedDay: dayOfWeek, selectedMonth: monthOfYear, selectedYear: year }); //set today date, month, year, day on screen change
       handleDispatch(date, dayOfWeek, monthOfYear, year);
-      setIsIncomeOrExpense(EXPENSE)
-      isIncomeExpense(EXPENSE)
     }
+    isIncomeExpense(EXPENSE)
+    setIsIncomeOrExpense(EXPENSE);
+    
   }, [isFocused])
 
   // used useEffact to setAllData when TODAY page not focused
