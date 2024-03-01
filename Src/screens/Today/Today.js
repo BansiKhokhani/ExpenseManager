@@ -1,65 +1,87 @@
 import React, { useEffect, useState } from 'react'
-import { View,TouchableOpacity, StyleSheet,FlatList } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Header from '../../Components/Header/Header';
 import AddNewItem from '../../Components/AddNewItems/AddNewItem';
 import Colors from '../../Constants/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent';
-import { dayOfWeek ,date,monthOfYear,year, convertToLocalString } from '../../Components/Helper';
-import { ADD, CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME, TODAY } from '../../Components/constants';
-import { useDispatch ,useSelector} from 'react-redux';
-import { addExpense, addIncome} from '../../Components/Redux/Action';
+import { dayOfWeek, date, monthOfYear, year, convertToLocalString } from '../../Components/Helper';
+import { ADD, CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME, TODAY, EDIT } from '../../Components/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { addExpense, addIncome,updateExpense, updateIncome  } from '../../Components/Redux/Action';
 
 export default function Today() {
-  const dispatch=useDispatch();
-  const todayExpenseData=useSelector(state=>state.expenseReducer[year]?.[monthOfYear]?.[date]);
-  const todayIncomeData=useSelector(state=>state.incomeReducer[year]?.[monthOfYear]?.[date]);
+  const dispatch = useDispatch();
+  const todayExpenseData = useSelector(state => state.expenseReducer[year]?.[monthOfYear]?.[date]);
+  const todayIncomeData = useSelector(state => state.incomeReducer[year]?.[monthOfYear]?.[date]);
   const [showCustomComponent, setShowCustomComponent] = useState(false);
-  const [data,setData]=useState();
-  const [isIncomeOrExpense,setIsIncomeOrExpense]=useState(EXPENSE);
+  const [data, setData] = useState();
+  const [editData, setEditData] = useState(null);
+  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);
 
 
-  useEffect(()=>{
-    if(isIncomeOrExpense==EXPENSE)
-        setData(todayExpenseData);
-    else 
-        setData(todayIncomeData);
-    
-  },[todayExpenseData,todayIncomeData,isIncomeOrExpense]);
+  useEffect(() => {
+    if (isIncomeOrExpense == EXPENSE)
+      setData(todayExpenseData);
+    else
+      setData(todayIncomeData);
 
-  
+  }, [todayExpenseData, todayIncomeData, isIncomeOrExpense]);
+
+
 
 
   // Used to call this function AddButtonComponentButton pressed by user
   const handleButtonPress = (value) => {
     setShowCustomComponent(value)
   }
-  const handleChildData=(value)=>{
-    const inputPrice=convertToLocalString(value?.inputPrice);
-    const details={inputDetail:value.inputDetail,inputPrice:inputPrice,uniqueId:value.uniqueId};
-    if(isIncomeOrExpense==EXPENSE)
-      dispatch(addExpense(year, monthOfYear, date, details));
-    else
-      dispatch(addIncome(year, monthOfYear, date, details));
-    
-  } 
-  const renderItem=({item})=>(
-    <ProductComponent data={item} isIncomeExpense={isIncomeOrExpense}/>
+  const handleChildData = (value) => {
+    const inputPrice = convertToLocalString(value?.inputPrice);
+    const details = { inputDetail: value.inputDetail, inputPrice: inputPrice, uniqueId: value.uniqueId };
+    if (isIncomeOrExpense == EXPENSE) {
+      if (editData == null)
+        dispatch(addExpense(year, monthOfYear, date, details));
+      else
+        dispatch(updateExpense(year, monthOfYear, date, details));
+    }
+    else {
+      if (editData == null)
+        dispatch(addIncome(year, monthOfYear, date, details));
+      else
+        dispatch(updateIncome(year, monthOfYear, date, details));
+    }
+  }
+
+  // const handleChildData123 = (value) => {
+  //   const inputPrice = convertToLocalString(value.inputPrice);
+  //   const details = { inputDetail: value.inputDetail, inputPrice: inputPrice, uniqueId: value.uniqueId };
+  //   if (isIncomeExpense == EXPENSE)
+  //     dispatch(updateExpense(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details))
+  //   else
+  //     dispatch(updateIncome(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details))
+  // }
+
+
+
+
+
+  const renderItem = ({ item }) => (
+    <ProductComponent data={item} isIncomeExpense={isIncomeOrExpense} isShowCustomComponent={handleButtonPress} editData={(data) => { setEditData(data) }} />
   )
 
   return (
     <View style={styles.mainView}>
-      <Header page={TODAY}  isIncomeExpense={(value)=>{setIsIncomeOrExpense(value)}}></Header>
+      <Header page={TODAY} isIncomeExpense={(value) => { setIsIncomeOrExpense(value) }}></Header>
       <View style={{ flex: 1 }}>
         {
           showCustomComponent && (
-            <AddNewItem isShowCustomComponent={handleButtonPress} itemType={ADD} onData={handleChildData} editData={null}/>
+            <AddNewItem isShowCustomComponent={handleButtonPress} itemType={editData == null ? ADD : EDIT} onData={handleChildData} editData={editData} />
           )
         }
         <FlatList showsVerticalScrollIndicator={false} data={data} renderItem={renderItem} style={{ flex: 1, marginTop: 5 }}></FlatList>
-       
+
         <View style={styles.subView}>
-          <TouchableOpacity style={styles.touchableOpacity} onPress={() => handleButtonPress(!showCustomComponent)} activeOpacity={1}>
+          <TouchableOpacity style={styles.touchableOpacity} onPress={() => { handleButtonPress(!showCustomComponent), setEditData(null) }} activeOpacity={1}>
             <View>
               <AntDesign name="plus" size={25} color={Colors.buttonColor} />
             </View>
