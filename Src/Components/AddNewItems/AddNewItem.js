@@ -15,21 +15,23 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
     const [inputPrice, setinputPrice] = useState("");
 
     useEffect(() => {
-        setinputDetail(editData?.inputDetail);
-        setinputPrice(convertToNormalNumberString(editData?.inputPrice));//hello
+        if (itemType === EDIT) {
+            setinputDetail(editData?.inputDetail);
+            setinputPrice(convertToNormalNumberString(editData?.inputPrice));//hello
+        }
     }, [editData])
 
     const toggleModalVisibility = () => {
         setModalVisible(!isModalVisible),
-        isShowCustomComponent(!isModalVisible)
+            isShowCustomComponent(!isModalVisible)
     }
 
     const sendDataToParent = () => {
-        if (inputDetail.length <= 0 && inputPrice == null) {
+        if (inputDetail == null && inputPrice == null) {
             Toast.show('Please Enter the Detail and Price.', Toast.LONG);
             textInputDetailRef.current.focus();
         }
-        else if (inputDetail.length <= 0) {
+        else if (inputDetail <= 0) {
             Toast.show('Please Enter the Detail.');
             textInputDetailRef.current.focus();
         }
@@ -38,23 +40,21 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
             textInputPriceRef.current.focus();
         }
         else {
-           
+
             Toast.show(itemType == ADD ? 'Added!' : 'Edited!');
             let uniqueId = null;
             itemType == ADD ? uniqueId = generateUniqueId() : (uniqueId = editData?.uniqueId);
-            console.log(inputPrice)
             const data = { inputDetail, inputPrice, uniqueId };
-            console.log(inputPrice)
             onData(data);
             setinputDetail("");
-            setinputPrice();
+            setinputPrice("");
             textInputDetailRef.current.focus();
             if (itemType == EDIT) {
                 setModalVisible(!isModalVisible),
                     isShowCustomComponent(!isModalVisible)
             }
         }
-       
+
 
     }
 
@@ -81,7 +81,13 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
                                     <TextInput placeholder="Enter Price...."
                                         value={inputPrice} style={styles.textInput}
                                         keyboardType="numeric"
-                                        onChangeText={(value) => { (/^\d*\.?\d*$/.test(value)&& value.length<=10) && setinputPrice(value); }} ref={textInputPriceRef} />
+                                        maxLength={10}
+                                        onKeyPress={(event) => {
+                                            if (event.nativeEvent.key === ' ' || inputPrice === null) {
+                                                event.preventDefault();
+                                            }
+                                        }}
+                                        onChangeText={(value) => { (/^\d*\.?\d*$/.test(value)) && setinputPrice(value); }} ref={textInputPriceRef} />
                                 </View>
                             </View>
                         </>
