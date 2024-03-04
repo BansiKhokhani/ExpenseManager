@@ -27,15 +27,19 @@ export default function Header({ page, isIncomeExpense }) {
       setAllData({ selectedDate: date, selectedDay: dayOfWeek, selectedMonth: monthOfYear, selectedYear: year }); //set today date, month, year, day on screen change
       handleDispatch(date, dayOfWeek, monthOfYear, year);
     }
+    else{
+      selectType(initialData);
+    }
     isIncomeExpense(EXPENSE)
     setIsIncomeOrExpense(EXPENSE);
-    
+
   }, [isFocused])
 
-  // used useEffact to setAllData when TODAY page not focused
+  //used useEffact to setAllData when TODAY page not focused
   useEffect(() => {
-    if (page != TODAY)
+    if (page != TODAY) {
       setAllData(initialData)
+    }
   }, [initialData])
 
   // Function call on Next button

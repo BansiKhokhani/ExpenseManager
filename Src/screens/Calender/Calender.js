@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState,useRef } from 'react'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity ,BackHandler,Alert} from 'react-native'
 import Header from '../../Components/Header/Header'
 import Colors from '../../Constants/Colors'
 import MonthComponent from '../../Components/MonthComponent/MonthComponent'
@@ -15,7 +15,8 @@ import { daysOfMonthData } from '../../Components/Helper'
 import { EXPENSE, INCOME } from '../../Components/constants'
 import { addExpense, addIncome ,updateExpense,updateIncome} from '../../Components/Redux/Action';
 
-export default function Calender() {
+export default function Calender({navigation}) {
+  const flatListRef = useRef(null);
   const initialdata = useSelector(state => state.selectedDateMonthYearReducer)
   const dispatch = useDispatch();
   const todayExpenseData = useSelector(state => state.expenseReducer[initialdata.selectedYear]?.[initialdata.selectedMonth]?.[initialdata.selectedDate]);
@@ -31,6 +32,7 @@ export default function Calender() {
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);
   const [editData, setEditData] = useState(null);  // used for when product edit by user
 
+ 
 
 
   useEffect(() => {
@@ -74,6 +76,7 @@ export default function Calender() {
   }, [isFocused])
 
   useEffect(() => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
     setSelectedYear(initialdata.selectedYear);
     setNumberOfDaysOfMonth(daysOfMonthData(initialdata.selectedMonth, initialdata.selectedYear))
   }, [initialdata])
@@ -102,7 +105,7 @@ export default function Calender() {
     <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH) }} />
   );
   const renderDaysComponent = ({ item }) => (
-    <DaysComponent item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY) }} />
+    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY) }} />
   );
 
   return (
@@ -120,6 +123,7 @@ export default function Calender() {
       {isMonthSelected &&
         <View style={{ flex: 1, marginTop: 5 }}>
           <FlatList
+            ref={flatListRef}
             data={numberOfDaysOfMonth}
             renderItem={renderDaysComponent}
             showsVerticalScrollIndicator={false}

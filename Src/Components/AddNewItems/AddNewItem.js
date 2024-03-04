@@ -27,7 +27,7 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
     }
 
     const sendDataToParent = () => {
-        if (inputDetail == null && inputPrice == null) {
+        if (inputDetail.length<=0 && inputPrice.length<=0) {
             Toast.show('Please Enter the Detail and Price.', Toast.LONG);
             textInputDetailRef.current.focus();
         }
@@ -35,7 +35,7 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
             Toast.show('Please Enter the Detail.');
             textInputDetailRef.current.focus();
         }
-        else if (inputPrice == null) {
+        else if (inputPrice.length<=0) {
             Toast.show('Please Enter the price.');
             textInputPriceRef.current.focus();
         }

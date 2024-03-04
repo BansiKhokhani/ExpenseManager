@@ -8,7 +8,9 @@ import Colors from './Src/Constants/Colors';
 import Calendar from './Src/screens/Calender/Calender';
 import Today from './Src/screens/Today/Today';
 import Report from './Src/screens/Report/Report'
+import Miscellaneous from './Src/screens/Miscellaneous/Miscellaneous';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Stack = createNativeStackNavigator();
 const Tab=createBottomTabNavigator();
@@ -27,15 +29,22 @@ const navigationContainer=()=>{
                 iconName = focused
                   ? 'today'
                   : 'today-outline';
+                  return <Ionicons name={iconName} size={size} color={color} />;
               } else if (route.name === 'Calendar') {
                 iconName = focused ? 'calendar' : 'calendar-outline';
+                return <Ionicons name={iconName} size={size} color={color} />;
               }
               else if(route.name==='Report'){
                 iconName = focused ? 'bar-chart' : 'bar-chart-outline';
+                return <Ionicons name={iconName} size={size} color={color} />;
+              }
+              else if(route.name==='Miscellaneous'){
+                iconName = focused ? 'miscellaneous-services' : 'miscellaneous-services';
+                return <MaterialIcons name={iconName} size={size} color={color} />;
               }
 
-              // You can return any component that you like here!
-              return <Ionicons name={iconName} size={size} color={color} />;
+             
+              
             },
             tabBarActiveTintColor:Colors.tabBarActiveColor,
             tabBarInactiveTintColor:Colors.tabBarInActiveColor,
@@ -59,7 +68,11 @@ const navigationContainer=()=>{
             component={Report}  
             options={{headerShown:false}}
           />
-         
+          <Tab.Screen
+            name="Miscellaneous"
+            component={Miscellaneous}  
+            options={{headerShown:false}}
+          />
       </Tab.Navigator>
     </NavigationContainer>
   );

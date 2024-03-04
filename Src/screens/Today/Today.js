@@ -52,18 +52,6 @@ export default function Today() {
     }
   }
 
-  // const handleChildData123 = (value) => {
-  //   const inputPrice = convertToLocalString(value.inputPrice);
-  //   const details = { inputDetail: value.inputDetail, inputPrice: inputPrice, uniqueId: value.uniqueId };
-  //   if (isIncomeExpense == EXPENSE)
-  //     dispatch(updateExpense(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details))
-  //   else
-  //     dispatch(updateIncome(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details))
-  // }
-
-
-
-
 
   const renderItem = ({ item }) => (
     <ProductComponent data={item} isIncomeExpense={isIncomeOrExpense} isShowCustomComponent={handleButtonPress} editData={(data) => { setEditData(data) }} />

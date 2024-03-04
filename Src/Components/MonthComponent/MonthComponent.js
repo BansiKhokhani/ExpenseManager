@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../../Constants/Colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateselected_Date_Month_Year } from '../Redux/Action';
-import { CALENDER_YEAR_MONTH, EXPENSE, CALENDER_YEAR, REPORT_CALENDER_YEAR } from '../constants';
+import { CALENDER_YEAR_MONTH, EXPENSE, CALENDER_YEAR, REPORT_CALENDER_YEAR, REPORT_CALENDER_YEAR_MONTH } from '../constants';
 import { convertToNormalNumber } from '../Helper'
 import TotalIncomeExpenseComponent from '../totalIncomeExpenseComponent/totalIncomeExpenseComponent';
 
@@ -52,7 +52,7 @@ const MonthComponent = ({ page, monthName, isIncomeOrExpense, isPress }) => {
          <View style={{ flexDirection: 'row', marginHorizontal: 5 }}>
            <View style={{ backgroundColor: Colors.buttonColor, borderRadius: 10 ,padding:20,alignSelf:'center'}}><Text style={{ color: Colors.whitetextcolor, fontSize: 25, fontWeight: '900' }}>{monthName.substring(0,3)}</Text></View>
            <View style={{flex:1,paddingLeft:10,paddingTop:5}}>
-             <TotalIncomeExpenseComponent color={Colors.textcolor}/>
+             <TotalIncomeExpenseComponent color={Colors.textcolor} page={REPORT_CALENDER_YEAR_MONTH} selectedMonthName={monthName}/>
            </View>
          </View>
        </TouchableOpacity>
