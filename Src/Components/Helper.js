@@ -66,7 +66,16 @@ export const daysOfMonthData=(currentMonth,currentYear)=>{
    
     return data;
 }
-
+//return array of year of object of year from 2014 to current year
+export const objectOfYear=()=>{
+    const data=[];
+    for(i=2014;i<=year;i++)
+    {
+        data.push({'year':i})
+    }
+    console.log(data);
+    return data;
+}
 //Generate unique id 
 export const generateUniqueId=()=>{
      const uid=uuid.v4();
