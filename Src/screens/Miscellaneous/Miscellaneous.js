@@ -4,7 +4,9 @@ import Colors from '../../Constants/Colors'
 var RNFS = require('react-native-fs');
 import XLSX from 'xlsx';
 import Toast from 'react-native-simple-toast';
-import {objectOfYear} from './../../Components/Helper';
+import { objectOfYear } from './../../Components/Helper';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-8955881905609463/6363795382';  //banner ads
 
 const Miscellaneous = () => {
     const [isExportFile, setIsExportFile] = useState(false);
@@ -12,7 +14,7 @@ const Miscellaneous = () => {
     const [isRateUs, setIsRateUs] = useState(false);
     const [isButtonShow, setIsButtonShow] = useState(true);
     const [yearData, setYearData] = useState();
-    const [selectedYear,setSelectedYear]=useState();
+    const [selectedYear, setSelectedYear] = useState();
 
 
 
@@ -20,9 +22,17 @@ const Miscellaneous = () => {
     const exportDataToExcel = () => {
 
         // Created Sample data
-        let sample_data_to_export = [{ id: '1', name: 'Bansi' }, { id: '2', name: 'Ketan' }];
+        const sampleData = [
+            [`january ${34843}`],
+            ['Date', 'Detail', 'Income', 'Expense'],
+            [2, 'Rent', 600, 600],
+            // Add more data rows as needed
+        ];
+
+        const ws = XLSX.utils.aoa_to_sheet(sampleData);
+        ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }];
+
         let wb = XLSX.utils.book_new();
-        let ws = XLSX.utils.json_to_sheet(sample_data_to_export)
         XLSX.utils.book_append_sheet(wb, ws, "Users")
         const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
 
@@ -78,10 +88,12 @@ const Miscellaneous = () => {
     return (
         <View style={styles.mainView}>
             {/* add banner ads */}
-            <View style={{ backgroundColor: 'white', height: '8%' }} />
+            <BannerAd
+                unitId={adUnitId}
+                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            />
             <View style={styles.subView}>
-
-                {isButtonShow && <><TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false) ,setYearData(objectOfYear()),setSelectedYear}} style={styles.button}>
+                {isButtonShow && <><TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()), setSelectedYear }} style={styles.button}>
                     <Text style={styles.text}>Export Excel</Text>
                 </TouchableOpacity>
                     <TouchableOpacity onPress={() => { }} style={styles.button}>
@@ -93,18 +105,18 @@ const Miscellaneous = () => {
                 {isExportFile &&
                     <>
                         <Text style={{ color: Colors.whitetextcolor, fontWeight: 'bold', fontSize: 20 }}>SELECT YEAR:</Text>
-                        <View style={{ flex: 0.3,width:'40%'}}>
+                        <View style={{ flex: 0.3, width: '40%' }}>
                             <FlatList
                                 data={yearData}
                                 renderItem={({ item }) => (
-                                    <TouchableOpacity activeOpacity={1} onPress={()=>{setSelectedYear(item.year)}}>
-                                        {console.log(".."+selectedYear)}
-                                        <Text style={[(selectedYear==item.year?styles.selectedYearText:styles.unSelectedYearText)]}>{item.year}</Text>
-                                        <View style={{borderWidth:0.2,borderColor:'#ffff',width:'100%'}}/>
+                                    <TouchableOpacity activeOpacity={1} onPress={() => { setSelectedYear(item.year) }}>
+                                        {console.log(".." + selectedYear)}
+                                        <Text style={[(selectedYear == item.year ? styles.selectedYearText : styles.unSelectedYearText)]}>{item.year}</Text>
+                                        <View style={{ borderWidth: 0.2, borderColor: '#ffff', width: '100%' }} />
                                     </TouchableOpacity>
-                                )} 
+                                )}
                                 showsVerticalScrollIndicator={false}
-                                />
+                            />
                         </View>
                         <TouchableOpacity onPress={handleClick} style={styles.button}>
                             <Text style={styles.text}> Export</Text>
@@ -139,8 +151,8 @@ const styles = StyleSheet.create({
 
     },
     text: { textAlign: 'center', color: Colors.whitetextcolor, fontWeight: 'bold' },
-    unSelectedYearText:{textAlign:'center',paddingVertical:10,color:Colors.whitetextcolor,fontWeight:'bold'},
-    selectedYearText:{textAlign:'center',paddingVertical:10,color:Colors.textcolor,backgroundColor:Colors.whitetextcolor,fontWeight:'bold'},
+    unSelectedYearText: { textAlign: 'center', paddingVertical: 10, color: Colors.whitetextcolor, fontWeight: 'bold' },
+    selectedYearText: { textAlign: 'center', paddingVertical: 10, color: Colors.textcolor, backgroundColor: Colors.whitetextcolor, fontWeight: 'bold' },
 })
 export default Miscellaneous;
 

@@ -9,7 +9,7 @@ import MonthComponent from '../../Components/MonthComponent/MonthComponent'
 import { useSelector, useDispatch } from 'react-redux'
 import DaysComponent from '../../Components/DaysComponent/DaysComponent'
 import { daysOfMonthData,dayOfWeek, date, monthOfYear, year, month, convertToLocalString } from '../../Components/Helper'
-
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 
 const Report = () => {
@@ -20,9 +20,12 @@ const Report = () => {
   const [selectedMonthName, setSelectedMonthName] = useState(null);
   const [numberOfDaysInMonth,setNumberOfDaysInMonth]=useState(null);
   const isFocused = useIsFocused();
+  const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-8955881905609463/6363795382';     // banner ads
+
 
   useEffect(() => {
     setSelectedPageMode(REPORT_CALENDER_YEAR)
+    
   }, [isFocused])
 
   useEffect(() => {
@@ -66,7 +69,12 @@ const Report = () => {
   return (
     <View style={styles.mainView}>
       {/* add banner ads */}
-      <View style={{ backgroundColor: 'white', height: '8%' }} />
+      <View style={{ backgroundColor: Colors.topBottomBarcolor, height: '8%' }} >
+          <BannerAd
+          unitId={adUnitId}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        />
+        </View>
       {/* add report */}
       <Header page={selectedPageMode} isIncomeExpense={() => { }} />
       <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}>
