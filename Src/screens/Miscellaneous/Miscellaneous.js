@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity, Text, PermissionsAndroid, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, TouchableOpacity, Text, PermissionsAndroid, FlatList, Linking } from 'react-native'
 import Colors from '../../Constants/Colors'
 var RNFS = require('react-native-fs');
 import XLSX from 'xlsx';
@@ -7,57 +7,64 @@ import Toast from 'react-native-simple-toast';
 import { indexOfMonth, objectOfYear, convertToNormalNumber, convertToLocalString } from './../../Components/Helper';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { useSelector, useDispatch } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 import { EXPENSE, INCOME } from '../../Components/constants';
+import SwiperComponent from '../../Components/Swiper/SwiperComponent';
 const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-8955881905609463/6363795382';  //banner ads
 
 const Miscellaneous = () => {
     const [isExportFile, setIsExportFile] = useState(false);
     const [isHelp, setIsHelp] = useState(false);
-    const [isRateUs, setIsRateUs] = useState(false);
     const [isButtonShow, setIsButtonShow] = useState(true);
     const [yearData, setYearData] = useState();
     const [selectedYear, setSelectedYear] = useState();
     const expenseData = useSelector(state => state.expenseReducer);
     const incomeData = useSelector(state => state.incomeReducer);
-    const [totalExpense,setTotalExpense]=useState(0);
+    const isFocused = useIsFocused();
+    
 
-    const handleData = (month, expenseData,incomeData) => {
+    useEffect(()=>{
+        setIsButtonShow(true);
+        setIsHelp(false);
+        setIsExportFile(false);
         
-        const data=[['EXPENSE',expenseData],['INCOME',incomeData]];
-        let finalExpenseData=[
+
+    },[isFocused])
+    const handleData = (month, expenseData, incomeData) => {
+
+        const data = [['EXPENSE', expenseData], ['INCOME', incomeData]];
+        let finalExpenseData = [
             [`${month}`, `${selectedYear}`],
-            ['DATE', 'DETAIL OF EXPENSE' , 'AMOUNT']
+            ['DATE', 'DETAIL OF EXPENSE', 'AMOUNT']
         ];
-        let finalIncomeData=[
-            ['DATE', 'DETAIL OF INCOME' , 'AMOUNT']
+        let finalIncomeData = [
+            ['DATE', 'DETAIL OF INCOME', 'AMOUNT']
         ]
-        let totalExpense=0;
-        data.filter(incomeExpenseData=>{
-            const finalData=[];
-           console.log(incomeExpenseData[0])
+        let totalExpense = 0;
+        data.filter(incomeExpenseData => {
+            const finalData = [];
+            console.log(incomeExpenseData[0])
             let total = 0;
             for (const datekey in incomeExpenseData[1]) {
                 incomeExpenseData[1]?.[datekey]?.filter(item => {
-                     const date = `${datekey}-${indexOfMonth(month) + 1}-${selectedYear}`;
+                    const date = `${datekey}-${indexOfMonth(month) + 1}-${selectedYear}`;
                     finalData.push([date, item.inputDetail, item.inputPrice]);
                     total += convertToNormalNumber(item?.inputPrice);
-                })  
+                })
             }
-            if(incomeExpenseData[0]==='EXPENSE')
-                {
-                    totalExpense=total;
-                    finalExpenseData=finalExpenseData.concat(finalData);
-                    finalExpenseData.push(['', `TOTAL EXPENSE`, convertToLocalString(total)])
-                }
-                else
-                {
-                    finalIncomeData=finalIncomeData.concat(finalData);
-                    finalIncomeData.push(['', `TOTAL INCOME`, convertToLocalString(total)],['', 'TOTAL EXPENSE', convertToLocalString(totalExpense)],['','BALANCE',`${total-totalExpense}`])
-                }
+            if (incomeExpenseData[0] === 'EXPENSE') {
+                totalExpense = total;
+                finalExpenseData = finalExpenseData.concat(finalData);
+                finalExpenseData.push(['', `TOTAL EXPENSE`, convertToLocalString(total)])
+            }
+            else {
+                finalIncomeData = finalIncomeData.concat(finalData);
+                finalIncomeData.push(['', `TOTAL INCOME`, convertToLocalString(total)], ['', 'TOTAL EXPENSE', convertToLocalString(totalExpense)], ['', 'BALANCE', `${total - totalExpense}`])
+            }
         })
-       
-    
-        return {finalExpenseData,finalIncomeData};
+
+
+        return { finalExpenseData, finalIncomeData };
     }
 
     // function to handle exporting
@@ -86,7 +93,7 @@ const Miscellaneous = () => {
             let wb = XLSX.utils.book_new();
             for (const monthKey in combinedOMonthKey) {
                 const month = combinedOMonthKey[monthKey];
-                const {finalExpenseData:expense,finalIncomeData:income}=handleData(month, expensedata?.[month],incomedata?.[month]);
+                const { finalExpenseData: expense, finalIncomeData: income } = handleData(month, expensedata?.[month], incomedata?.[month]);
                 const ws = XLSX.utils.aoa_to_sheet([]);
                 ws['!cols'] = [{ wch: 10 }, { wch: 30 }, { wch: 30 }, { wch: 5 }, { wch: 10 }, { wch: 30 }, { wch: 30 }]; // set a cell width
                 XLSX.utils.sheet_add_aoa(ws, expense, { origin: 'A2' });
@@ -148,6 +155,18 @@ const Miscellaneous = () => {
             return
         }
     }
+
+
+   
+
+    const handleRateUs = () => {
+        const appPackageName = "com.bricks.wall.balls.shooter"; // Replace with your app's package name
+      const playStoreUrl = `https://play.google.com/store/apps/details?id=${appPackageName}`;
+      Linking.openURL(playStoreUrl)
+        .catch(err => console.error('An error occurred', err));
+    };
+
+
     return (
         <View style={styles.mainView}>
             {/* add banner ads */}
@@ -156,13 +175,14 @@ const Miscellaneous = () => {
                 size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
             />
             <View style={styles.subView}>
-                {isButtonShow && <><TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()) }} style={styles.button}>
-                    <Text style={styles.text}>Export Excel</Text>
-                </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { }} style={styles.button}>
+                {isButtonShow && <>
+                    <TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()) }} style={styles.button}>
+                        <Text style={styles.text}>Export Excel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => { setIsButtonShow(false), setIsHelp(true)}} style={styles.button}>
                         <Text style={styles.text}> Help</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { }} style={styles.button}>
+                    <TouchableOpacity onPress={handleRateUs} style={styles.button}>
                         <Text style={styles.text}> Rate Us</Text>
                     </TouchableOpacity></>}
                 {isExportFile &&
@@ -186,6 +206,10 @@ const Miscellaneous = () => {
                         </TouchableOpacity>
                     </>
                 }
+                {isHelp &&
+                    <SwiperComponent/>
+                }
+               
             </View>
         </View>
     );
