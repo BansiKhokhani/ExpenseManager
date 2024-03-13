@@ -6,7 +6,7 @@ import { updateselected_Date_Month_Year } from '../Redux/Action';
 import { CALENDER_YEAR_MONTH, EXPENSE, REPORT_CALENDER_YEAR_MONTH } from '../constants';
 import { convertToNormalNumber } from '../Helper'
 
-const DaysComponent = ({ navigation,page, item, isPress, isIncomeOrExpense }) => {
+const DaysComponent = ({ page, item, isPress, isIncomeOrExpense }) => {
     const dispatch = useDispatch();
     const { selectedDate, selectedDay, selectedMonth, selectedYear } = useSelector(state => state.selectedDateMonthYearReducer)
     const [amount, setamount] = useState(0.00);
@@ -29,6 +29,7 @@ const DaysComponent = ({ navigation,page, item, isPress, isIncomeOrExpense }) =>
 
     const presstoGoOnCalendar=()=>{
         handleDispatch(item.date, item.day, selectedMonth, selectedYear)
+        isPress(true);
         
     }
 

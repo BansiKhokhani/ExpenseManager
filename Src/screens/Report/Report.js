@@ -12,7 +12,7 @@ import { daysOfMonthData,dayOfWeek, date, monthOfYear, year, month, convertToLoc
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 
-const Report = () => {
+const Report = ({navigation}) => {
   const flatListRef = useRef(null);
   const { selectedYear, selectedMonth } = useSelector(state => state.selectedDateMonthYearReducer)
   const [currentselectedYear, setCurrentSelectedYear] = useState(selectedYear);     // cureent selected year in app
@@ -86,7 +86,7 @@ const Report = () => {
   );
 
   const renderDaysComponent=({item})=>(
-    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={null} isPress={()=>{}}/>
+    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={null} isPress={(value)=>{navigation.navigate('Calendar',{isFromReport:true})}}/>
   )
 
   return (

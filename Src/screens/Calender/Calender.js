@@ -15,7 +15,8 @@ import { daysOfMonthData } from '../../Components/Helper'
 import { EXPENSE, INCOME } from '../../Components/constants'
 import { addExpense, addIncome, updateExpense, updateIncome } from '../../Components/Redux/Action';
 
-export default function Calender({ navigation }) {
+export default function Calender({ route }) {
+  const isFromReport = route?.params?.isFromReport;
   const flatListRef = useRef(null);
   const initialdata = useSelector(state => state.selectedDateMonthYearReducer)
   const dispatch = useDispatch();
@@ -36,24 +37,22 @@ export default function Calender({ navigation }) {
   useEffect(() => {
     const backAction = () => {
       if (stack.length > 0) {
-        setSelectedPageMode(stack[stack.length-1])
-        if(stack[stack.length-1]===CALENDER_YEAR_MONTH)
-        {
-            setIsMonthSelected(true);
-            setIsDaySelected(false);
-            
+        setSelectedPageMode(stack[stack.length - 1])
+        if (stack[stack.length - 1] === CALENDER_YEAR_MONTH) {
+          setIsMonthSelected(true);
+          setIsDaySelected(false);
+
         }
-        else{
-         setIsMonthSelected(false);
+        else {
+          setIsMonthSelected(false);
         }
-        let newStack=[...stack];
-        newStack.splice((stack.length - 1),1);
+        let newStack = [...stack];
+        newStack.splice((stack.length - 1), 1);
         setstack(newStack);
-        
-       return true //return false when finally need to close app
+
+        return true //return false when finally need to close app
       }
-      else
-      {
+      else {
         return false;
       }
     };
@@ -66,11 +65,6 @@ export default function Calender({ navigation }) {
     return () => backHandler.remove();
 
   }, [stack]);
-
-
-  // useEffect(() => {
-  //  // console.log(stack)
-  // }, [stack])
 
   useEffect(() => {
     if (isIncomeOrExpense == EXPENSE)
@@ -107,10 +101,16 @@ export default function Calender({ navigation }) {
   }
   //called when screen isfocused
   useEffect(() => {
-    setstack([])
-    setSelectedPageMode(CALENDER_YEAR)
-    setIsMonthSelected(false)
-    setIsDaySelected(false);
+    if (isFromReport) {
+        setSelectedPageMode(CALENDER_YEAR_MONTH_DAY);
+        setIsDaySelected(true);
+    }
+    else {
+      setstack([])
+      setSelectedPageMode(CALENDER_YEAR)
+      setIsMonthSelected(false)
+      setIsDaySelected(false);
+    }
   }, [isFocused])
 
   useEffect(() => {
@@ -140,10 +140,10 @@ export default function Calender({ navigation }) {
 
 
   const renderMonthComponent = ({ item }) => (
-    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH), stack.length < 2 && setstack([...stack,CALENDER_YEAR]) }} />
+    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH), stack.length < 2 && setstack([...stack, CALENDER_YEAR]) }} />
   );
   const renderDaysComponent = ({ item }) => (
-    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY), stack.length < 2 && setstack([...stack,CALENDER_YEAR_MONTH]) }} />
+    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY), stack.length < 2 && setstack([...stack, CALENDER_YEAR_MONTH]) }} />
   );
 
   return (
