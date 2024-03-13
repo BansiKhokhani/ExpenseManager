@@ -1,4 +1,5 @@
 import uuid from 'react-native-uuid';
+import notifee, { TriggerType,RepeatFrequency } from "@notifee/react-native";
 
 // Get the current date, month, and year.........................................
 const currentDate = new Date();
@@ -96,3 +97,40 @@ export const convertToNormalNumber=(value)=>{
 export const convertToNormalNumberString=(value)=>{
     return (value)?.replace(/[^0-9.-]+/g,"").substring(0, 10);
 }
+
+
+//pUSH NOTIFICATION
+//   export async function onCreateTriggerNotification() {
+//    // await notifee.requestPermission();
+
+//     const date = new Date(Date.now());
+//     date.setHours(18);
+//     date.setMinutes(0);
+
+//     // Create a time-based trigger
+//     const trigger= {
+//       type: TriggerType.TIMESTAMP,
+//       timestamp: date.getTime(), 
+//       repeatFrequency: RepeatFrequency.DAILY, // repeat EVERY DAY
+//     };
+
+//       // Create a channel (required for Android)
+//       const channelId = await notifee.createChannel({
+//         id: 'default',
+//         name: 'Default Channel',
+//       });
+
+ 
+
+//     // Create a trigger notification
+//     await notifee.createTriggerNotification(
+//       {
+//         title: 'Reminder!',
+//         body: `Don't forget to add your spending for today!`,
+//         android: {
+//           channelId
+//         },
+//       },
+//       trigger,
+//     );
+//   }

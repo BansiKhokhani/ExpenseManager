@@ -4,8 +4,10 @@ import Colors from '../../Constants/Colors'
 var RNFS = require('react-native-fs');
 import XLSX from 'xlsx';
 import Toast from 'react-native-simple-toast';
-import { objectOfYear } from './../../Components/Helper';
+import { indexOfMonth, objectOfYear, convertToNormalNumber, convertToLocalString } from './../../Components/Helper';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { useSelector, useDispatch } from 'react-redux';
+import { EXPENSE, INCOME } from '../../Components/constants';
 const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-8955881905609463/6363795382';  //banner ads
 
 const Miscellaneous = () => {
@@ -15,40 +17,90 @@ const Miscellaneous = () => {
     const [isButtonShow, setIsButtonShow] = useState(true);
     const [yearData, setYearData] = useState();
     const [selectedYear, setSelectedYear] = useState();
+    const expenseData = useSelector(state => state.expenseReducer);
+    const incomeData = useSelector(state => state.incomeReducer);
+    const [totalExpense,setTotalExpense]=useState(0);
+
+    const handleData = (month, data, type) => {
+        
 
 
+        
+        const sampleData = [
+            type == 'EXPENSE' && [`${month}`, `${selectedYear}`],
+            ['DATE', `DETAIL OF ${type}`, 'AMOUNT']
+        ];
+        let total = 0;
+        for (const datekey in data) {
+            data?.[datekey]?.filter(item => {
+                const date = `${datekey}-${indexOfMonth(month) + 1}-${selectedYear}`;
+                sampleData.push([date, item.inputDetail, item.inputPrice]);
+                total += convertToNormalNumber(item?.inputPrice);
+            })
+        }
+       if(type=='EXPENSE'&&total>0)
+       {
+            setTotalExpense(total);
+       }
+
+        sampleData.push(['', `TOTAL ${type}`, convertToLocalString(total)])
+        type=='INCOME'&& sampleData.push(['', 'TOTAL EXPENSE', convertToLocalString(totalExpense)],['','BALANCE',`${total-totalExpense}`])
+        return sampleData;
+    }
 
     // function to handle exporting
-    const exportDataToExcel = () => {
+    const exportDataToExcel = async () => {
+        const expensedata = expenseData?.[selectedYear];
+        const incomedata = incomeData?.[selectedYear];
+        if (expensedata || incomedata) {
 
-        // Created Sample data
-        const sampleData = [
-            [`january ${34843}`],
-            ['Date', 'Detail', 'Income', 'Expense'],
-            [2, 'Rent', 600, 600],
-            // Add more data rows as needed
-        ];
+            let combinedOMonthKey = null;
+            if (expensedata && incomedata) {
+                const expenseKeys = Object.keys(expensedata);
+                const incomeKeys = Object.keys(incomedata);
+                const combinedSet = new Set([...expenseKeys, ...incomeKeys]);
+                combinedOMonthKey = Array.from(combinedSet);
+            }
+            else if (incomedata) {
+                const incomeKeys = Object.keys(incomedata);
+                combinedOMonthKey = incomeKeys;
+            }
+            else {
+                const expenseKeys = Object.keys(expensedata);
+                combinedOMonthKey = expenseKeys;
+            }
+            // console.log(combinedOMonthKey)
 
-        const ws = XLSX.utils.aoa_to_sheet(sampleData);
-        ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }];
+            let wb = XLSX.utils.book_new();
+            for (const monthKey in combinedOMonthKey) {
+                const month = combinedOMonthKey[monthKey];
+                const expense = handleData(month, expensedata?.[month], 'EXPENSE');
+                const income = handleData(month, incomedata?.[month], 'INCOME');
+                const ws = XLSX.utils.aoa_to_sheet([]);
+                ws['!cols'] = [{ wch: 10 }, { wch: 30 }, { wch: 30 }, { wch: 5 }, { wch: 10 }, { wch: 30 }, { wch: 30 }]; // set a cell width
+                XLSX.utils.sheet_add_aoa(ws, expense, { origin: 'A2' });
+                XLSX.utils.sheet_add_aoa(ws, income, { origin: 'E2' });
+                XLSX.utils.book_append_sheet(wb, ws, `${month}`);
+            }
 
-        let wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Users")
-        const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
+            // Convert workbook to binary Excel format
+            const wbout = XLSX.write(wb, { type: 'binary' });
 
-        // Write generated excel to Storage
 
-        RNFS.writeFile(RNFS.DownloadDirectoryPath + '/ExpenseIncomeDataFile.xlsx', wbout, 'ascii').then((r) => {
-            Toast.show('Successfully Downloaded!', Toast.LONG);
+            await RNFS.writeFile(RNFS.DownloadDirectoryPath + `/ExpenseIncomeDataFile${selectedYear}.xlsx`, wbout, 'ascii').then((r) => {
+                Toast.show('Successfully Downloaded!', Toast.LONG);
 
-        }).catch((e) => {
-            console.log('Error', e);
-        });
+            }).catch((e) => {
+                console.log('Error', e);
+                Toast.show(`Sorry! you can't download`, Toast.LONG);
+            });
+        }
+        else {
+            Toast.show(`Sorry! No Data Found`, Toast.SHORT);
+        }
 
     }
     const handleClick = async () => {
-        console.log('hello')
-
         try {
             // Check for Permission (check if permission is already given or not)
             let isPermitedExternalStorage = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
@@ -110,7 +162,7 @@ const Miscellaneous = () => {
                                 data={yearData}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity activeOpacity={1} onPress={() => { setSelectedYear(item.year) }}>
-                                        {console.log(".." + selectedYear)}
+
                                         <Text style={[(selectedYear == item.year ? styles.selectedYearText : styles.unSelectedYearText)]}>{item.year}</Text>
                                         <View style={{ borderWidth: 0.2, borderColor: '#ffff', width: '100%' }} />
                                     </TouchableOpacity>
@@ -118,7 +170,7 @@ const Miscellaneous = () => {
                                 showsVerticalScrollIndicator={false}
                             />
                         </View>
-                        <TouchableOpacity onPress={handleClick} style={styles.button}>
+                        <TouchableOpacity onPress={() => { !selectedYear ? Toast.show(`Select the year!`, Toast.LONG) : handleClick() }} style={styles.button}>
                             <Text style={styles.text}> Export</Text>
                         </TouchableOpacity>
                     </>

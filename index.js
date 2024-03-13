@@ -6,11 +6,20 @@ import { name as appName } from './app.json';
 import NavigationContainer from './navigation.js';
 import { store, persistor } from './Src/Components/Redux/store.js';
 import Colors from './Src/Constants/Colors.js';
+import { onCreateTriggerNotification } from './Src/Components/Helper.js';
 
 const App = () => {
   const [showCustomAlert, setShowCustomAlert] = useState(false);
 
+
+
+
+
   useEffect(() => {
+
+    
+    // onCreateTriggerNotification();
+
     const backAction = () => {
       setShowCustomAlert(true);
       return true;
@@ -22,6 +31,7 @@ const App = () => {
     );
 
     return () => backHandler.remove();
+    
   }, []);
 
   const handleCancel = () => {
