@@ -1,9 +1,9 @@
-import React, { useEffect, useState,useRef } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity ,BackHandler,Alert} from 'react-native'
+import React, { useEffect, useState, useRef } from 'react'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, BackHandler, Alert } from 'react-native'
 import Header from '../../Components/Header/Header'
 import Colors from '../../Constants/Colors'
 import MonthComponent from '../../Components/MonthComponent/MonthComponent'
-import { ADD, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY,EDIT } from '../../Components/constants';
+import { ADD, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY, EDIT } from '../../Components/constants';
 import { dayOfWeek, date, monthOfYear, year, month, convertToLocalString } from '../../Components/Helper';
 import { useIsFocused } from '@react-navigation/native';
 import DaysComponent from '../../Components/DaysComponent/DaysComponent'
@@ -13,9 +13,9 @@ import AddNewItem from '../../Components/AddNewItems/AddNewItem';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent'
 import { daysOfMonthData } from '../../Components/Helper'
 import { EXPENSE, INCOME } from '../../Components/constants'
-import { addExpense, addIncome ,updateExpense,updateIncome} from '../../Components/Redux/Action';
+import { addExpense, addIncome, updateExpense, updateIncome } from '../../Components/Redux/Action';
 
-export default function Calender({navigation}) {
+export default function Calender({ navigation }) {
   const flatListRef = useRef(null);
   const initialdata = useSelector(state => state.selectedDateMonthYearReducer)
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ export default function Calender({navigation}) {
   const todayIncomeData = useSelector(state => state.incomeReducer[initialdata.selectedYear]?.[initialdata.selectedMonth]?.[initialdata.selectedDate]);
   const [selectedYear, setSelectedYear] = useState(initialdata.selectedYear);     // cureent selected year in app
   const [selectedPageMode, setSelectedPageMode] = useState(CALENDER_YEAR);        // current selected page mode i.e., CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY
-  const [isMonthSelected, setIsMonthSelected] = useState(false);                  
+  const [isMonthSelected, setIsMonthSelected] = useState(false);
   const [isDaySelected, setIsDaySelected] = useState(false);
   const isFocused = useIsFocused();
   const [showCustomComponent, setShowCustomComponent] = useState(false);        // It used for 
@@ -31,9 +31,46 @@ export default function Calender({navigation}) {
   const [productData, setproductData] = useState([]);
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);
   const [editData, setEditData] = useState(null);  // used for when product edit by user
+  const [stack, setstack] = useState([]);
 
- 
+  useEffect(() => {
+    const backAction = () => {
+      if (stack.length > 0) {
+        setSelectedPageMode(stack[stack.length-1])
+        if(stack[stack.length-1]===CALENDER_YEAR_MONTH)
+        {
+            setIsMonthSelected(true);
+            setIsDaySelected(false);
+            
+        }
+        else{
+         setIsMonthSelected(false);
+        }
+        let newStack=[...stack];
+        newStack.splice((stack.length - 1),1);
+        setstack(newStack);
+        
+       return true //return false when finally need to close app
+      }
+      else
+      {
+        return false;
+      }
+    };
 
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+
+  }, [stack]);
+
+
+  // useEffect(() => {
+  //  // console.log(stack)
+  // }, [stack])
 
   useEffect(() => {
     if (isIncomeOrExpense == EXPENSE)
@@ -70,6 +107,7 @@ export default function Calender({navigation}) {
   }
   //called when screen isfocused
   useEffect(() => {
+    setstack([])
     setSelectedPageMode(CALENDER_YEAR)
     setIsMonthSelected(false)
     setIsDaySelected(false);
@@ -102,10 +140,10 @@ export default function Calender({navigation}) {
 
 
   const renderMonthComponent = ({ item }) => (
-    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH) }} />
+    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH), stack.length < 2 && setstack([...stack,CALENDER_YEAR]) }} />
   );
   const renderDaysComponent = ({ item }) => (
-    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY) }} />
+    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY), stack.length < 2 && setstack([...stack,CALENDER_YEAR_MONTH]) }} />
   );
 
   return (

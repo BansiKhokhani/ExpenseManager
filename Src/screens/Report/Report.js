@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useRef } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity ,BackHandler} from 'react-native'
 import Header from '../../Components/Header/Header'
 import Colors from '../../Constants/Colors'
 import { REPORT_CALENDER_YEAR, REPORT_CALENDER_YEAR_MONTH, INCOME, EXPENSE, TOTAL } from '../../Components/constants'
@@ -21,9 +21,32 @@ const Report = () => {
   const [numberOfDaysInMonth,setNumberOfDaysInMonth]=useState(null);
   const isFocused = useIsFocused();
   const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-8955881905609463/6363795382';     // banner ads
-
-
+  const [stack, setstack] = useState([]);
   useEffect(() => {
+    const backAction = () => {
+      if (stack.length > 0) {
+        setSelectedPageMode(stack[stack.length-1])
+        let newStack=[...stack];
+        newStack.splice((stack.length - 1),1);
+        setstack(newStack);
+       return true //return false when finally need to close app
+      }
+      else
+      {
+        return false;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+
+  }, [stack]);
+  useEffect(() => {
+    setstack([]);
     setSelectedPageMode(REPORT_CALENDER_YEAR)
     
   }, [isFocused])
@@ -59,7 +82,7 @@ const Report = () => {
 
 
   const renderMonthComponent = ({ item }) => (
-    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={null} isPress={(value) => { setSelectedPageMode(REPORT_CALENDER_YEAR_MONTH) }} />
+    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={null} isPress={(value) => { setSelectedPageMode(REPORT_CALENDER_YEAR_MONTH),setstack([REPORT_CALENDER_YEAR]) }} />
   );
 
   const renderDaysComponent=({item})=>(

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, TouchableOpacity, Text, PermissionsAndroid, FlatList, Linking } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, PermissionsAndroid, FlatList, Linking ,BackHandler} from 'react-native'
 import Colors from '../../Constants/Colors'
 var RNFS = require('react-native-fs');
 import XLSX from 'xlsx';
@@ -21,14 +21,40 @@ const Miscellaneous = () => {
     const expenseData = useSelector(state => state.expenseReducer);
     const incomeData = useSelector(state => state.incomeReducer);
     const isFocused = useIsFocused();
+    const [stack, setstack] = useState([]);
     
+    useEffect(() => {
+        const backAction = () => {
+          if (stack.length > 0) {
+            setIsButtonShow(true);
+            setIsExportFile(false);
+            setIsHelp(false);
+            let newStack=[...stack];
+            newStack.splice((stack.length - 1),1);
+            setstack(newStack);
+           return true //return false when finally need to close app
+          }
+          else
+          {
+            return false;
+          }
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction,
+        );
+    
+        return () => backHandler.remove();
+    
+      }, [stack]);
+
 
     useEffect(()=>{
+        setstack([])
         setIsButtonShow(true);
         setIsHelp(false);
         setIsExportFile(false);
-        
-
     },[isFocused])
     const handleData = (month, expenseData, incomeData) => {
 
@@ -43,7 +69,6 @@ const Miscellaneous = () => {
         let totalExpense = 0;
         data.filter(incomeExpenseData => {
             const finalData = [];
-            console.log(incomeExpenseData[0])
             let total = 0;
             for (const datekey in incomeExpenseData[1]) {
                 incomeExpenseData[1]?.[datekey]?.filter(item => {
@@ -103,14 +128,18 @@ const Miscellaneous = () => {
 
             // Convert workbook to binary Excel format
             const wbout = XLSX.write(wb, { type: 'binary' });
-
-
-            await RNFS.writeFile(RNFS.DownloadDirectoryPath + `/ExpenseIncomeDataFile${selectedYear}.xlsx`, wbout, 'ascii').then((r) => {
-                Toast.show('Successfully Downloaded!', Toast.LONG);
+            const filePath=RNFS.DownloadDirectoryPath + `/ExpenseIncomeDataFile${selectedYear}.xlsx`;
+            const exists = await RNFS.exists(filePath); 
+            if(exists)
+                await RNFS.unlink(filePath);
+           
+            await RNFS.writeFile(filePath, wbout, 'ascii').then((r) => {
+                Toast.show('Successfully Downloaded!', Toast.SHORT);
 
             }).catch((e) => {
                 console.log('Error', e);
-                Toast.show(`Sorry! you can't download`, Toast.LONG);
+                Toast.show(`Sorry! you can't download`, Toast.SHORT);
+                //RNFS.writeFile(RNFS.DocumentDirectoryPath + `/ExpenseIncomeDataFile${selectedYear}.xlsx`, wbout, 'ascii').then((r) => {}).catch((e) => {});;
             });
         }
         else {
@@ -176,13 +205,13 @@ const Miscellaneous = () => {
             />
             <View style={styles.subView}>
                 {isButtonShow && <>
-                    <TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()) }} style={styles.button}>
+                    <TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()),setstack(['Main Page']) }} style={styles.button}>
                         <Text style={styles.text}>Export Excel</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { setIsButtonShow(false), setIsHelp(true)}} style={styles.button}>
+                    <TouchableOpacity onPress={() => { setIsButtonShow(false), setIsHelp(true),setstack(['Main Page'])}} style={styles.button}>
                         <Text style={styles.text}> Help</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleRateUs} style={styles.button}>
+                    <TouchableOpacity onPress={handleRateUs} style={styles.button }>
                         <Text style={styles.text}> Rate Us</Text>
                     </TouchableOpacity></>}
                 {isExportFile &&
@@ -201,7 +230,7 @@ const Miscellaneous = () => {
                                 showsVerticalScrollIndicator={false}
                             />
                         </View>
-                        <TouchableOpacity onPress={() => { !selectedYear ? Toast.show(`Select the year!`, Toast.LONG) : SaveDataToExcel() }} style={styles.button}>
+                        <TouchableOpacity onPress={() => { !selectedYear ? Toast.show(`Select the year!`, Toast.SHORT) : SaveDataToExcel() }} style={styles.button}>
                             <Text style={styles.text}> Export</Text>
                         </TouchableOpacity>
                     </>

@@ -74,7 +74,6 @@ export const objectOfYear=()=>{
     {
         data.push({'year':i})
     }
-    console.log(data);
     return data;
 }
 //Generate unique id 
