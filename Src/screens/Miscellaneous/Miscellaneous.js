@@ -21,35 +21,47 @@ const Miscellaneous = () => {
     const incomeData = useSelector(state => state.incomeReducer);
     const [totalExpense,setTotalExpense]=useState(0);
 
-    const handleData = (month, data, type) => {
+    const handleData = (month, expenseData,incomeData) => {
         
-
-
-        
-        const sampleData = [
-            type == 'EXPENSE' && [`${month}`, `${selectedYear}`],
-            ['DATE', `DETAIL OF ${type}`, 'AMOUNT']
+        const data=[['EXPENSE',expenseData],['INCOME',incomeData]];
+        let finalExpenseData=[
+            [`${month}`, `${selectedYear}`],
+            ['DATE', 'DETAIL OF EXPENSE' , 'AMOUNT']
         ];
-        let total = 0;
-        for (const datekey in data) {
-            data?.[datekey]?.filter(item => {
-                const date = `${datekey}-${indexOfMonth(month) + 1}-${selectedYear}`;
-                sampleData.push([date, item.inputDetail, item.inputPrice]);
-                total += convertToNormalNumber(item?.inputPrice);
-            })
-        }
-       if(type=='EXPENSE'&&total>0)
-       {
-            setTotalExpense(total);
-       }
-
-        sampleData.push(['', `TOTAL ${type}`, convertToLocalString(total)])
-        type=='INCOME'&& sampleData.push(['', 'TOTAL EXPENSE', convertToLocalString(totalExpense)],['','BALANCE',`${total-totalExpense}`])
-        return sampleData;
+        let finalIncomeData=[
+            ['DATE', 'DETAIL OF INCOME' , 'AMOUNT']
+        ]
+        let totalExpense=0;
+        data.filter(incomeExpenseData=>{
+            const finalData=[];
+           console.log(incomeExpenseData[0])
+            let total = 0;
+            for (const datekey in incomeExpenseData[1]) {
+                incomeExpenseData[1]?.[datekey]?.filter(item => {
+                     const date = `${datekey}-${indexOfMonth(month) + 1}-${selectedYear}`;
+                    finalData.push([date, item.inputDetail, item.inputPrice]);
+                    total += convertToNormalNumber(item?.inputPrice);
+                })  
+            }
+            if(incomeExpenseData[0]==='EXPENSE')
+                {
+                    totalExpense=total;
+                    finalExpenseData=finalExpenseData.concat(finalData);
+                    finalExpenseData.push(['', `TOTAL EXPENSE`, convertToLocalString(total)])
+                }
+                else
+                {
+                    finalIncomeData=finalIncomeData.concat(finalData);
+                    finalIncomeData.push(['', `TOTAL INCOME`, convertToLocalString(total)],['', 'TOTAL EXPENSE', convertToLocalString(totalExpense)],['','BALANCE',`${total-totalExpense}`])
+                }
+        })
+       
+    
+        return {finalExpenseData,finalIncomeData};
     }
 
     // function to handle exporting
-    const exportDataToExcel = async () => {
+    const ExcelFileOperation = async () => {
         const expensedata = expenseData?.[selectedYear];
         const incomedata = incomeData?.[selectedYear];
         if (expensedata || incomedata) {
@@ -74,12 +86,11 @@ const Miscellaneous = () => {
             let wb = XLSX.utils.book_new();
             for (const monthKey in combinedOMonthKey) {
                 const month = combinedOMonthKey[monthKey];
-                const expense = handleData(month, expensedata?.[month], 'EXPENSE');
-                const income = handleData(month, incomedata?.[month], 'INCOME');
+                const {finalExpenseData:expense,finalIncomeData:income}=handleData(month, expensedata?.[month],incomedata?.[month]);
                 const ws = XLSX.utils.aoa_to_sheet([]);
                 ws['!cols'] = [{ wch: 10 }, { wch: 30 }, { wch: 30 }, { wch: 5 }, { wch: 10 }, { wch: 30 }, { wch: 30 }]; // set a cell width
                 XLSX.utils.sheet_add_aoa(ws, expense, { origin: 'A2' });
-                XLSX.utils.sheet_add_aoa(ws, income, { origin: 'E2' });
+                XLSX.utils.sheet_add_aoa(ws, income, { origin: 'E3' });
                 XLSX.utils.book_append_sheet(wb, ws, `${month}`);
             }
 
@@ -100,7 +111,7 @@ const Miscellaneous = () => {
         }
 
     }
-    const handleClick = async () => {
+    const SaveDataToExcel = async () => {
         try {
             // Check for Permission (check if permission is already given or not)
             let isPermitedExternalStorage = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
@@ -120,16 +131,16 @@ const Miscellaneous = () => {
 
 
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                    // Permission Granted (calling our exportDataToExcel function)
-                    exportDataToExcel();
+                    // Permission Granted (calling our ExcelFileOperation function)
+                    ExcelFileOperation();
                     console.log("Permission granted");
                 } else {
                     // Permission denied
                     console.log("Permission denied");
                 }
             } else {
-                // Already have Permission (calling our exportDataToExcel function)
-                exportDataToExcel();
+                // Already have Permission (calling our ExcelFileOperation function)
+                ExcelFileOperation();
             }
         } catch (e) {
             console.log('Error while checking permission');
@@ -145,7 +156,7 @@ const Miscellaneous = () => {
                 size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
             />
             <View style={styles.subView}>
-                {isButtonShow && <><TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()), setSelectedYear }} style={styles.button}>
+                {isButtonShow && <><TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()) }} style={styles.button}>
                     <Text style={styles.text}>Export Excel</Text>
                 </TouchableOpacity>
                     <TouchableOpacity onPress={() => { }} style={styles.button}>
@@ -170,7 +181,7 @@ const Miscellaneous = () => {
                                 showsVerticalScrollIndicator={false}
                             />
                         </View>
-                        <TouchableOpacity onPress={() => { !selectedYear ? Toast.show(`Select the year!`, Toast.LONG) : handleClick() }} style={styles.button}>
+                        <TouchableOpacity onPress={() => { !selectedYear ? Toast.show(`Select the year!`, Toast.LONG) : SaveDataToExcel() }} style={styles.button}>
                             <Text style={styles.text}> Export</Text>
                         </TouchableOpacity>
                     </>
