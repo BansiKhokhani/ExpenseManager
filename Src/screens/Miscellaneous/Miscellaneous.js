@@ -4,13 +4,14 @@ import Colors from '../../Components/Colors'
 var RNFS = require('react-native-fs');
 import XLSX from 'xlsx';
 import Toast from 'react-native-simple-toast';
-import { indexOfMonth, objectOfYear, convertToNormalNumber, convertToLocalString } from './../../Components/Helper';
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { indexOfMonth, objectOfYear, convertToNormalNumber, convertToLocalString,width,height } from './../../Components/Helper';
+import { BannerAd, BannerAdSize, RewardedAd, TestIds } from 'react-native-google-mobile-ads';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { EXPENSE, INCOME } from '../../Components/constants';
 import SwiperComponent from '../../Components/Swiper/SwiperComponent';
-const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-8955881905609463/6363795382';  //banner ads
+import { BannerAds, RewardedAds } from '../../Components/ads/Ads';
+
 
 const Miscellaneous = () => {
     const [isExportFile, setIsExportFile] = useState(false);
@@ -95,7 +96,7 @@ const Miscellaneous = () => {
     const ExcelFileOperation = async () => {
 
         const filePath = RNFS.DownloadDirectoryPath + `/ExpenseIncomeDataFile${selectedYear}.xlsx`;
-        const exists = await RNFS.exists(filePath);  
+        const exists = await RNFS.exists(filePath);
         if (exists) {
             await RNFS.unlink(filePath);
         }
@@ -203,12 +204,12 @@ const Miscellaneous = () => {
     return (
         <View style={styles.mainView}>
             {/* add banner ads */}
-            <BannerAd
-                unitId={adUnitId}
-                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            />
+            <BannerAds />
             <View style={styles.subView}>
                 {isButtonShow && <>
+                    <View style={{ position: 'absolute', top: 0, width: width, height: (height/4)}}>
+                        <RewardedAds />
+                    </View>
                     <TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()), setstack(['Main Page']) }} style={styles.button}>
                         <Text style={styles.text}>Export Excel</Text>
                     </TouchableOpacity>
@@ -217,9 +218,16 @@ const Miscellaneous = () => {
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleRateUs} style={styles.button}>
                         <Text style={styles.text}> Rate Us</Text>
-                    </TouchableOpacity></>}
+                    </TouchableOpacity>
+                    <View style={{ position: 'absolute', bottom: 0,width: width, height: (height/4)}}>
+                        <RewardedAds />
+                    </View>
+                </>}
                 {isExportFile &&
                     <>
+                        <View style={{ position: 'absolute', top: 0, width: width, height: (height/4) }}>
+                            <RewardedAds />
+                        </View>
                         <Text style={{ color: Colors.whitetextcolor, fontWeight: 'bold', fontSize: 20 }}>SELECT YEAR:</Text>
                         <View style={{ flex: 0.3, width: '40%' }}>
                             <FlatList
@@ -237,6 +245,9 @@ const Miscellaneous = () => {
                         <TouchableOpacity onPress={() => { !selectedYear ? Toast.show(`Select the year!`, Toast.SHORT) : SaveDataToExcel() }} style={styles.button}>
                             <Text style={styles.text}> Export</Text>
                         </TouchableOpacity>
+                        <View style={{ position: 'absolute', bottom: 0, width: width, height: (height/4)}}>
+                            <RewardedAds />
+                        </View>
                     </>
                 }
                 {isHelp &&
