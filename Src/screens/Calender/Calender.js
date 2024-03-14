@@ -16,7 +16,6 @@ import { EXPENSE, INCOME } from '../../Components/constants'
 import { addExpense, addIncome, updateExpense, updateIncome } from '../../Components/Redux/Action';
 
 export default function Calender({ route }) {
-  const isFromReport = route?.params?.isFromReport;
   const flatListRef = useRef(null);
   const initialdata = useSelector(state => state.selectedDateMonthYearReducer)
   const dispatch = useDispatch();
@@ -101,9 +100,11 @@ export default function Calender({ route }) {
   }
   //called when screen isfocused
   useEffect(() => {
-    if (isFromReport) {
+    if (route?.params?.isFromReport==='Report Page') {
+      setstack([CALENDER_YEAR,CALENDER_YEAR_MONTH]) 
         setSelectedPageMode(CALENDER_YEAR_MONTH_DAY);
         setIsDaySelected(true);
+        route.params.isFromReport='';
     }
     else {
       setstack([])

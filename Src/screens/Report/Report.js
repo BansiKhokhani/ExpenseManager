@@ -86,7 +86,7 @@ const Report = ({navigation}) => {
   );
 
   const renderDaysComponent=({item})=>(
-    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={null} isPress={(value)=>{navigation.navigate('Calendar',{isFromReport:true})}}/>
+    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={null} isPress={(value)=>{navigation.navigate('Calendar',{isFromReport:'Report Page'})}}/>
   )
 
   return (
