@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Button, SafeAreaView, StyleSheet, Modal, View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity, Keyboard } from 'react-native'
-import Colors from '../../Constants/Colors';
+import Colors from '../Colors';
 import Toast from 'react-native-simple-toast';
 import { convertToNormalNumberString, generateUniqueId } from '../Helper';
 import { ADD, EDIT } from './../constants'

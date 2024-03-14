@@ -4,7 +4,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Colors from './Src/Constants/Colors';
+import Colors from './Src/Components/Colors';
 import Calendar from './Src/screens/Calender/Calender';
 import Today from './Src/screens/Today/Today';
 import Report from './Src/screens/Report/Report'

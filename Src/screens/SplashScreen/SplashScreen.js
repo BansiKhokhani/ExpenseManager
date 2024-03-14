@@ -1,6 +1,6 @@
 import React from 'react'
 import { View ,Text} from 'react-native'
-import Colors from '../../Constants/Colors'
+import Colors from '../../Components/Colors'
 
 
 const SplashScreen=()=>{

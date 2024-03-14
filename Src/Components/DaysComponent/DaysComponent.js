@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
-import Colors from '../../Constants/Colors';
+import Colors from '../Colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateselected_Date_Month_Year } from '../Redux/Action';
 import { CALENDER_YEAR_MONTH, EXPENSE, REPORT_CALENDER_YEAR_MONTH } from '../constants';

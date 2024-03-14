@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 import {View,Text} from 'react-native';
-import Colors from '../../Constants/Colors'
+import Colors from '../Colors'
 import {INCOME, EXPENSE, TOTAL, REPORT_CALENDER_YEAR_MONTH } from '../../Components/constants'
 import { useSelector, useDispatch } from 'react-redux'
 import { convertToLocalString, convertToNormalNumber } from '../../Components/Helper'

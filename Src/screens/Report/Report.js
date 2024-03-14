@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useRef } from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity ,BackHandler} from 'react-native'
 import Header from '../../Components/Header/Header'
-import Colors from '../../Constants/Colors'
+import Colors from '../../Components/Colors'
 import { REPORT_CALENDER_YEAR, REPORT_CALENDER_YEAR_MONTH, INCOME, EXPENSE, TOTAL } from '../../Components/constants'
 import TotalIncomeExpenseComponent from '../../Components/totalIncomeExpenseComponent/totalIncomeExpenseComponent'
 import { useIsFocused } from '@react-navigation/native';

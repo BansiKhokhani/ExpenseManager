@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StatusBar, TouchableOpacity, StyleSheet } from 'react-native'
-import Colors from '../../Constants/Colors'
+import Colors from '../Colors'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { TODAY, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME, REPORT, REPORT_CALENDER_YEAR, REPORT_CALENDER_YEAR_MONTH } from '../constants';
 import { year, indexOfMonth, monthnameOfYear, month, daysOfMonth, daynameOfWeek, indexOfDay, date, monthOfYear, dayOfWeek, convertToNormalNumber, convertToLocalString } from '../Helper';

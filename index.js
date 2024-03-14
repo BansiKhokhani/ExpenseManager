@@ -5,7 +5,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { name as appName } from './app.json';
 import NavigationContainer from './navigation.js';
 import { store, persistor } from './Src/Components/Redux/store.js';
-import Colors from './Src/Constants/Colors.js';
+import Colors from './Src/Components/Colors'
 import { onCreateTriggerNotification } from './Src/Components/Helper.js';
 
 const App = () => {

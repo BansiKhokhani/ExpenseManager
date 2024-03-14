@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, TouchableOpacity, Text, PermissionsAndroid, FlatList, Linking ,BackHandler} from 'react-native'
-import Colors from '../../Constants/Colors'
+import { View, StyleSheet, TouchableOpacity, Text, PermissionsAndroid, FlatList, Linking, BackHandler } from 'react-native'
+import Colors from '../../Components/Colors'
 var RNFS = require('react-native-fs');
 import XLSX from 'xlsx';
 import Toast from 'react-native-simple-toast';
@@ -22,40 +22,39 @@ const Miscellaneous = () => {
     const incomeData = useSelector(state => state.incomeReducer);
     const isFocused = useIsFocused();
     const [stack, setstack] = useState([]);
-    
+
     useEffect(() => {
         const backAction = () => {
-          if (stack.length > 0) {
-            setIsButtonShow(true);
-            setIsExportFile(false);
-            setIsHelp(false);
-            let newStack=[...stack];
-            newStack.splice((stack.length - 1),1);
-            setstack(newStack);
-           return true //return false when finally need to close app
-          }
-          else
-          {
-            return false;
-          }
+            if (stack.length > 0) {
+                setIsButtonShow(true);
+                setIsExportFile(false);
+                setIsHelp(false);
+                let newStack = [...stack];
+                newStack.splice((stack.length - 1), 1);
+                setstack(newStack);
+                return true //return false when finally need to close app
+            }
+            else {
+                return false;
+            }
         };
-    
+
         const backHandler = BackHandler.addEventListener(
-          'hardwareBackPress',
-          backAction,
+            'hardwareBackPress',
+            backAction,
         );
-    
+
         return () => backHandler.remove();
-    
-      }, [stack]);
+
+    }, [stack]);
 
 
-    useEffect(()=>{
+    useEffect(() => {
         setstack([])
         setIsButtonShow(true);
         setIsHelp(false);
         setIsExportFile(false);
-    },[isFocused])
+    }, [isFocused])
     const handleData = (month, expenseData, incomeData) => {
 
         const data = [['EXPENSE', expenseData], ['INCOME', incomeData]];
@@ -94,6 +93,12 @@ const Miscellaneous = () => {
 
     // function to handle exporting
     const ExcelFileOperation = async () => {
+
+        const filePath = RNFS.DownloadDirectoryPath + `/ExpenseIncomeDataFile${selectedYear}.xlsx`;
+        const exists = await RNFS.exists(filePath);  
+        if (exists) {
+            await RNFS.unlink(filePath);
+        }
         const expensedata = expenseData?.[selectedYear];
         const incomedata = incomeData?.[selectedYear];
         if (expensedata || incomedata) {
@@ -113,7 +118,7 @@ const Miscellaneous = () => {
                 const expenseKeys = Object.keys(expensedata);
                 combinedOMonthKey = expenseKeys;
             }
-            // console.log(combinedOMonthKey)
+
 
             let wb = XLSX.utils.book_new();
             for (const monthKey in combinedOMonthKey) {
@@ -128,18 +133,17 @@ const Miscellaneous = () => {
 
             // Convert workbook to binary Excel format
             const wbout = XLSX.write(wb, { type: 'binary' });
-            const filePath=RNFS.DownloadDirectoryPath + `/ExpenseIncomeDataFile${selectedYear}.xlsx`;
-            const exists = await RNFS.exists(filePath); 
-            if(exists)
-                await RNFS.unlink(filePath);
-           
+
+
             await RNFS.writeFile(filePath, wbout, 'ascii').then((r) => {
                 Toast.show('Successfully Downloaded!', Toast.SHORT);
 
             }).catch((e) => {
                 console.log('Error', e);
-                Toast.show(`Sorry! you can't download`, Toast.SHORT);
-                //RNFS.writeFile(RNFS.DocumentDirectoryPath + `/ExpenseIncomeDataFile${selectedYear}.xlsx`, wbout, 'ascii').then((r) => {}).catch((e) => {});;
+                const fileName = `ExpenseIncomeDataFile${selectedYear}.xlsx`;
+                Toast.show(`Sorry! you can't download.`, Toast.SHORT);
+                Toast.show(`Delete download/${fileName} file.`, Toast.LONG);
+
             });
         }
         else {
@@ -186,13 +190,13 @@ const Miscellaneous = () => {
     }
 
 
-   
+
 
     const handleRateUs = () => {
         const appPackageName = "com.bricks.wall.balls.shooter"; // Replace with your app's package name
-      const playStoreUrl = `https://play.google.com/store/apps/details?id=${appPackageName}`;
-      Linking.openURL(playStoreUrl)
-        .catch(err => console.error('An error occurred', err));
+        const playStoreUrl = `https://play.google.com/store/apps/details?id=${appPackageName}`;
+        Linking.openURL(playStoreUrl)
+            .catch(err => console.error('An error occurred', err));
     };
 
 
@@ -205,13 +209,13 @@ const Miscellaneous = () => {
             />
             <View style={styles.subView}>
                 {isButtonShow && <>
-                    <TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()),setstack(['Main Page']) }} style={styles.button}>
+                    <TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()), setstack(['Main Page']) }} style={styles.button}>
                         <Text style={styles.text}>Export Excel</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { setIsButtonShow(false), setIsHelp(true),setstack(['Main Page'])}} style={styles.button}>
+                    <TouchableOpacity onPress={() => { setIsButtonShow(false), setIsHelp(true), setstack(['Main Page']) }} style={styles.button}>
                         <Text style={styles.text}> Help</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleRateUs} style={styles.button }>
+                    <TouchableOpacity onPress={handleRateUs} style={styles.button}>
                         <Text style={styles.text}> Rate Us</Text>
                     </TouchableOpacity></>}
                 {isExportFile &&
@@ -236,9 +240,9 @@ const Miscellaneous = () => {
                     </>
                 }
                 {isHelp &&
-                    <SwiperComponent/>
+                    <SwiperComponent />
                 }
-               
+
             </View>
         </View>
     );

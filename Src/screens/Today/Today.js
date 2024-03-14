@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Header from '../../Components/Header/Header';
 import AddNewItem from '../../Components/AddNewItems/AddNewItem';
-import Colors from '../../Constants/Colors';
+import Colors from '../../Components/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductComponent from '../../Components/ProductComponent/ProductComponent';
 import { dayOfWeek, date, monthOfYear, year, convertToLocalString } from '../../Components/Helper';

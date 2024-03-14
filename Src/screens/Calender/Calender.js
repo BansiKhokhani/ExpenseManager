@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, BackHandler, Alert } from 'react-native'
 import Header from '../../Components/Header/Header'
-import Colors from '../../Constants/Colors'
+import Colors from '../../Components/Colors'
 import MonthComponent from '../../Components/MonthComponent/MonthComponent'
 import { ADD, CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY, EDIT } from '../../Components/constants';
 import { dayOfWeek, date, monthOfYear, year, month, convertToLocalString } from '../../Components/Helper';
