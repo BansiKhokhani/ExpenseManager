@@ -87,6 +87,7 @@ export const generateUniqueId=()=>{
 
 //convert to localString
 export const convertToLocalString=(value)=>{
+    // convert to localString like 3,33,333,333.00
     return (parseFloat(value,10)).toLocaleString(undefined,{minimumFractionDigits:2});
 }
 
