@@ -9,6 +9,7 @@ import { dayOfWeek, date, monthOfYear, year, convertToLocalString } from '../../
 import { ADD, CALENDER_YEAR_MONTH_DAY, EXPENSE, INCOME, TODAY, EDIT } from '../../Components/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { addExpense, addIncome,updateExpense, updateIncome  } from '../../Components/Redux/Action';
+import SplashScreen from 'react-native-splash-screen'
 
 export default function Today() {
   const dispatch = useDispatch();
@@ -19,6 +20,10 @@ export default function Today() {
   const [editData, setEditData] = useState(null);
   const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);
 
+
+useEffect(()=>{
+    SplashScreen.hide();
+},[])
 
   useEffect(() => {
     if (isIncomeOrExpense == EXPENSE)
