@@ -17,8 +17,8 @@ export default  Today=() =>{
   const todayIncomeData = useSelector(state => state.incomeReducer[year]?.[monthOfYear]?.[date]);   // get and store the specified year, month and date product data of the INCOME
   const [showCustomComponent, setShowCustomComponent] = useState(false);  // for the ADD new product (Item) component popup or model
   const [data, setData] = useState();                                     // Store INCOME or EXPENSE product(item) data
-  const [editData, setEditData] = useState(null);                         // store current product( item ) edit data
-  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);    // store current mode (INCOME or EXPENSE)
+  const [editData, setEditData] = useState(null);                         // store selected product( item ) edit data
+  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);    // store selected mode (INCOME or EXPENSE)
 
 // Hide the splash screen 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default  Today=() =>{
   }, [todayExpenseData, todayIncomeData, isIncomeOrExpense]);
 
 
-  // Used to call this function AddButtonComponentButton pressed by user
+  // Used to call this function AddButtonComponent pressed 
   const handleButtonPress = (value) => {
     setShowCustomComponent(value)
   }

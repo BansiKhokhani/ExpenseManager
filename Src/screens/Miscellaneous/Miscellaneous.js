@@ -5,24 +5,22 @@ var RNFS = require('react-native-fs');
 import XLSX from 'xlsx';
 import Toast from 'react-native-simple-toast';
 import { indexOfMonth, objectOfYear, convertToNormalNumber, convertToLocalString,width,height } from './../../Components/Helper';
-import { BannerAd, BannerAdSize, RewardedAd, TestIds } from 'react-native-google-mobile-ads';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector} from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
-import { EXPENSE, INCOME } from '../../Components/constants';
 import SwiperComponent from '../../Components/Swiper/SwiperComponent';
 import { BannerAds, RewardedAds } from '../../Components/ads/Ads';
 
 
 const Miscellaneous = () => {
+    const isFocused = useIsFocused();
     const [isExportFile, setIsExportFile] = useState(false);
     const [isHelp, setIsHelp] = useState(false);
-    const [isButtonShow, setIsButtonShow] = useState(true);
-    const [yearData, setYearData] = useState();
-    const [selectedYear, setSelectedYear] = useState();
-    const expenseData = useSelector(state => state.expenseReducer);
-    const incomeData = useSelector(state => state.incomeReducer);
-    const isFocused = useIsFocused();
-    const [stack, setstack] = useState([]);
+    const [isButtonShow, setIsButtonShow] = useState(true);           
+    const [yearData, setYearData] = useState();                     
+    const [selectedYear, setSelectedYear] = useState();             // selectedYear
+    const expenseData = useSelector(state => state.expenseReducer); // get and store expense data
+    const incomeData = useSelector(state => state.incomeReducer);   // get and store income data
+    const [stack, setstack] = useState([]);                          // set for the backbutton
 
     useEffect(() => {
         const backAction = () => {
@@ -39,7 +37,6 @@ const Miscellaneous = () => {
                 return false;
             }
         };
-
         const backHandler = BackHandler.addEventListener(
             'hardwareBackPress',
             backAction,
@@ -55,7 +52,7 @@ const Miscellaneous = () => {
         setIsButtonShow(true);
         setIsHelp(false);
         setIsExportFile(false);
-    }, [isFocused])
+    }, [isFocused]);
     const handleData = (month, expenseData, incomeData) => {
 
         const data = [['EXPENSE', expenseData], ['INCOME', incomeData]];

@@ -17,110 +17,21 @@ import { addExpense, addIncome, updateExpense, updateIncome } from '../../Compon
 
 export default function Calender({ route }) {
   const flatListRef = useRef(null);
-  const initialdata = useSelector(state => state.selectedDateMonthYearReducer)
   const dispatch = useDispatch();
-  const todayExpenseData = useSelector(state => state.expenseReducer[initialdata.selectedYear]?.[initialdata.selectedMonth]?.[initialdata.selectedDate]);
-  const todayIncomeData = useSelector(state => state.incomeReducer[initialdata.selectedYear]?.[initialdata.selectedMonth]?.[initialdata.selectedDate]);
-  const [selectedYear, setSelectedYear] = useState(initialdata.selectedYear);     // cureent selected year in app
-  const [selectedPageMode, setSelectedPageMode] = useState(CALENDER_YEAR);        // current selected page mode i.e., CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY
-  const [isMonthSelected, setIsMonthSelected] = useState(false);
-  const [isDaySelected, setIsDaySelected] = useState(false);
   const isFocused = useIsFocused();
-  const [showCustomComponent, setShowCustomComponent] = useState(false);        // It used for 
-  const [numberOfDaysOfMonth, setNumberOfDaysOfMonth] = useState(null);
-  const [productData, setproductData] = useState([]);
-  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);
-  const [editData, setEditData] = useState(null);  // used for when product edit by user
-  const [stack, setstack] = useState([]);
+  const initialdata = useSelector(state => state.selectedDateMonthYearReducer)     // selected date, month and year
+  const expenseData = useSelector(state => state.expenseReducer[initialdata.selectedYear]?.[initialdata.selectedMonth]?.[initialdata.selectedDate]); // get and store the specified year, month and date product data of the EXPENSE
+  const incomeData = useSelector(state => state.incomeReducer[initialdata.selectedYear]?.[initialdata.selectedMonth]?.[initialdata.selectedDate]); //get and store the specified year, month and date product data of the INCOME
+  const [selectedYear, setSelectedYear] = useState(initialdata.selectedYear);     //  selected year 
+  const [selectedPageMode, setSelectedPageMode] = useState(CALENDER_YEAR);        //selected page mode i.e., CALENDER_YEAR, CALENDER_YEAR_MONTH, CALENDER_YEAR_MONTH_DAY
+  const [showCustomComponent, setShowCustomComponent] = useState(false);        // for the ADD new product (Item) component popup or model
+  const [numberOfDaysOfMonth, setNumberOfDaysOfMonth] = useState(null);         // number of days of selected month
+  const [productData, setproductData] = useState([]);                           // Store INCOME or EXPENSE product(item) data
+  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);          // store selected mode (INCOME or EXPENSE)
+  const [editData, setEditData] = useState(null);                               // store selected product( item ) edit data
+  const [stack, setstack] = useState([]);                                       // set for the backbutton
 
-  useEffect(() => {
-    const backAction = () => {
-      if (stack.length > 0) {
-        setSelectedPageMode(stack[stack.length - 1])
-        if (stack[stack.length - 1] === CALENDER_YEAR_MONTH) {
-          setIsMonthSelected(true);
-          setIsDaySelected(false);
-
-        }
-        else {
-          setIsMonthSelected(false);
-        }
-        let newStack = [...stack];
-        newStack.splice((stack.length - 1), 1);
-        setstack(newStack);
-
-        return true //return false when finally need to close app
-      }
-      else {
-        return false;
-      }
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove();
-
-  }, [stack]);
-
-  useEffect(() => {
-    if (isIncomeOrExpense == EXPENSE)
-      setproductData(todayExpenseData);
-    else
-      setproductData(todayIncomeData);
-
-  }, [todayExpenseData, todayIncomeData, isIncomeOrExpense]);
-
-
-  // Used to call this function AddButtonComponentButton pressed by user
-  const handleButtonPress = (value) => {
-    setShowCustomComponent(value)
-  }
-
-
-  const handleChildData = (value) => {
-    const inputPrice = convertToLocalString(value?.inputPrice);
-    const details = { inputDetail: value.inputDetail, inputPrice: inputPrice, uniqueId: value.uniqueId };
-    if (isIncomeOrExpense == EXPENSE) {
-      if (editData == null)
-        dispatch(addExpense(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details));
-      else
-        dispatch(updateExpense(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details))
-
-    }
-    else {
-      if (editData == null)
-        dispatch(addIncome(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details));
-      else
-        dispatch(updateIncome(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details))
-    }
-
-  }
-  //called when screen isfocused
-  useEffect(() => {
-    if (route?.params?.isFromReport==='Report Page') {
-      setstack([CALENDER_YEAR,CALENDER_YEAR_MONTH]) 
-        setSelectedPageMode(CALENDER_YEAR_MONTH_DAY);
-        setIsDaySelected(true);
-        route.params.isFromReport='';
-    }
-    else {
-      setstack([])
-      setSelectedPageMode(CALENDER_YEAR)
-      setIsMonthSelected(false)
-      setIsDaySelected(false);
-    }
-  }, [isFocused])
-
-  useEffect(() => {
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-    setSelectedYear(initialdata.selectedYear);
-    setNumberOfDaysOfMonth(daysOfMonthData(initialdata.selectedMonth, initialdata.selectedYear))
-  }, [initialdata])
-
-  const data = [
+  const monthData = [
     { id: '1', monthName: 'January' },
     { id: '2', monthName: 'February' },
     { id: '3', monthName: 'March' },
@@ -135,32 +46,112 @@ export default function Calender({ route }) {
     { id: '12', monthName: 'December', },
   ];
 
+  //call on device backbutton press
+  useEffect(() => {
+    const backAction = () => {
+      if (stack.length > 0) {
+        setSelectedPageMode(stack[stack.length - 1])
+        let newStack = [...stack];
+        newStack.splice((stack.length - 1), 1);
+        setstack(newStack);
+        return true //return false when finally need to close app
+      }
+      else 
+        return false;
+      
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+
+  }, [stack]);
+
+  // call when new product ADD or Edit or Mode change by user
+  useEffect(() => {
+    if (isIncomeOrExpense == EXPENSE)
+      setproductData(expenseData);
+    else
+      setproductData(incomeData);
+
+  }, [expenseData, incomeData, isIncomeOrExpense]);
+
+  //called when screen isfocused
+  useEffect(() => {
+    if (route?.params?.isFromReport==='Report Page') {
+      setstack([CALENDER_YEAR,CALENDER_YEAR_MONTH]) 
+        setSelectedPageMode(CALENDER_YEAR_MONTH_DAY);
+        route.params.isFromReport='';
+    }
+    else {
+      setstack([])
+      setSelectedPageMode(CALENDER_YEAR)
+    }
+  }, [isFocused])
+
+  // call on initialData props update
+  useEffect(() => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+    setSelectedYear(initialdata.selectedYear);
+    setNumberOfDaysOfMonth(daysOfMonthData(initialdata.selectedMonth, initialdata.selectedYear))
+  }, [initialdata])
+
+ 
+  // Used to call this function AddButtonComponent pressed 
+  const handleButtonPress = (value) => {
+    setShowCustomComponent(value)
+  }
+
+// Add or Edit the income or expense data in redux from here
+  const handleChildData = (value) => {
+    const inputPrice = convertToLocalString(value?.inputPrice);
+    const details = { inputDetail: value.inputDetail, inputPrice: inputPrice, uniqueId: value.uniqueId };
+    if (isIncomeOrExpense == EXPENSE) {
+      if (editData == null)
+        dispatch(addExpense(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details)); // add expense data into redux
+      else
+        dispatch(updateExpense(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details)) // update expense data into redux
+
+    }
+    else {
+      if (editData == null)
+        dispatch(addIncome(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details)); //add income data into redux
+      else
+        dispatch(updateIncome(initialdata.selectedYear, initialdata.selectedMonth, initialdata.selectedDate, details)) // update income data into redux
+    }
+
+  }
   const renderItem = ({ item }) => (
     <ProductComponent data={item} isIncomeExpense={isIncomeOrExpense} isShowCustomComponent={handleButtonPress} editData={(data) => { setEditData(data) }} />
   )
 
 
   const renderMonthComponent = ({ item }) => (
-    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH), stack.length < 2 && setstack([...stack, CALENDER_YEAR]) }} />
+    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => {setSelectedPageMode(CALENDER_YEAR_MONTH), stack.length < 2 && setstack([...stack, CALENDER_YEAR]) }} />
   );
   const renderDaysComponent = ({ item }) => (
-    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setIsMonthSelected(!value), setIsDaySelected(value), setSelectedPageMode(CALENDER_YEAR_MONTH_DAY), stack.length < 2 && setstack([...stack, CALENDER_YEAR_MONTH]) }} />
+    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => {  setSelectedPageMode(CALENDER_YEAR_MONTH_DAY), stack.length < 2 && setstack([...stack, CALENDER_YEAR_MONTH]) }} />
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.pageBackgroundColor }}>
-      <Header page={selectedPageMode} isIncomeExpense={(value) => { setIsIncomeOrExpense(value) }}></Header>
+    <View style={styles.wrapper}>
+      {/* header component */}
+      <Header page={selectedPageMode} isIncomeExpense={(value) => { setIsIncomeOrExpense(value) }}></Header>  
+      {/*  display months on CALENDER_YEAR page mode*/}
       {selectedPageMode == CALENDER_YEAR &&
-        <View style={{ flex: 1, marginTop: 5 }}>
+        <View style={styles.mainView}>
           <FlatList
-            data={selectedYear == year ? data.slice(0, month) : data.slice(0, 12)}
+            data={selectedYear == year ? monthData.slice(0, month) : monthData.slice(0, 12)}
             renderItem={renderMonthComponent}
             numColumns={2}
             showsVerticalScrollIndicator={false}
           />
         </View>}
-      {isMonthSelected &&
-        <View style={{ flex: 1, marginTop: 5 }}>
+        {/*  display days of month on CALENDER_YEAR_MONTH page mode*/}
+      {selectedPageMode==CALENDER_YEAR_MONTH &&
+        <View style={styles.mainView}>
           <FlatList
             ref={flatListRef}
             data={numberOfDaysOfMonth}
@@ -168,14 +159,15 @@ export default function Calender({ route }) {
             showsVerticalScrollIndicator={false}
           />
         </View>}
-      {isDaySelected &&
+        {/* display products on  CALENDER_YEAR_MONTH_DAY page mode*/}
+      {selectedPageMode==CALENDER_YEAR_MONTH_DAY &&
         <View style={{ flex: 1 }}>
           {
             showCustomComponent && (
               <AddNewItem isShowCustomComponent={handleButtonPress} itemType={editData == null ? ADD : EDIT} onData={handleChildData} editData={editData} />
             )
           }
-          <FlatList showsVerticalScrollIndicator={false} data={productData} renderItem={renderItem} style={{ flex: 1, marginTop: 5 }}></FlatList>
+          <FlatList showsVerticalScrollIndicator={false} data={productData} renderItem={renderItem} style={styles.productFlatlist}></FlatList>
           <View style={styles.subView}>
             <TouchableOpacity style={styles.touchableOpacity} onPress={() => { handleButtonPress(!showCustomComponent), setEditData(null) }} activeOpacity={1}>
               <View>
@@ -190,6 +182,10 @@ export default function Calender({ route }) {
   )
 }
 const styles = StyleSheet.create({
+  wrapper:{ flex: 1, backgroundColor: Colors.pageBackgroundColor },
+  mainView:{
+    flex: 1, marginTop: 5
+  },
   container: {
     flex: 1,
     flexDirection: 'row',
@@ -212,12 +208,14 @@ const styles = StyleSheet.create({
   },
   touchableOpacity: {
     borderWidth: 0,
-    borderColor: 'rgba(0,0,0,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
     width: 50,
     height: 50,
     backgroundColor: '#fff',
     borderRadius: 50,
+  },
+  productFlatlist:{
+    flex: 1, marginTop: 5
   }
 })

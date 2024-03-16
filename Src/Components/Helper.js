@@ -1,5 +1,4 @@
 import uuid from 'react-native-uuid';
-import notifee, { TriggerType,RepeatFrequency } from "@notifee/react-native";
 import { Dimensions } from 'react-native'
 export const { width:width, height:height } = Dimensions.get('window')
 
