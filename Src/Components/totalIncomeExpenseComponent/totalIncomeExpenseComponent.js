@@ -1,17 +1,16 @@
-import React,{useState} from 'react'
-import {View,Text} from 'react-native';
-import Colors from '../Colors'
+import React from 'react'
+import {View,Text,StyleSheet} from 'react-native';
 import {INCOME, EXPENSE, TOTAL, REPORT_CALENDER_YEAR_MONTH } from '../../Components/constants'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector} from 'react-redux'
 import { convertToLocalString, convertToNormalNumber } from '../../Components/Helper'
 
 const TotalIncomeExpenseComponent=({color,page,selectedMonthName})=>{
-  const {selectedYear,selectedMonth} = useSelector(state => state.selectedDateMonthYearReducer)
-  const expenseData = useSelector(state => state.expenseReducer);
-  const incomeData = useSelector(state => state.incomeReducer);
+  const {selectedYear} = useSelector(state => state.selectedDateMonthYearReducer) // get the selected year
+  const expenseData = useSelector(state => state.expenseReducer); // get and store expense data 
+  const incomeData = useSelector(state => state.incomeReducer);  // get and store income data
 
 
-
+// return total income or expense of specified month of the year or specified year
   const handletotalCalculation = (incomeExpenseData) => {
     let totalexpense = 0;
 
@@ -38,29 +37,32 @@ const TotalIncomeExpenseComponent=({color,page,selectedMonthName})=>{
     return totalexpense;
   }
 
-const handleTotalExpenceIncome=()=>{
-  const expense=handletotalCalculation(expenseData);
-  const income=handletotalCalculation(incomeData);
-  const total=income-expense;
-  return {income,expense,total}
-}
   return (
     <View>
-          <View style={{flexDirection:'row',marginBottom:5}}>
-            <View style={{flex:1}}><Text style={{color:color,fontWeight:'bold'}}>{INCOME}</Text></View>
-            <View><Text style={{color:color,fontWeight:'bold'}}>{convertToLocalString(handletotalCalculation(incomeData))}</Text></View>
+          <View style={styles.mainView}>
+            {/* Display : INCOME                0.00 */}
+            <View style={{flex:1}}><Text style={[styles.text,{color:color}]}>{INCOME}</Text></View>
+            <View><Text style={[styles.text,{color:color}]}>{convertToLocalString(handletotalCalculation(incomeData))}</Text></View>
           </View>
-          <View style={{flexDirection:'row',marginBottom:5}}>
-            <View style={{flex:1}}><Text style={{color:color,fontWeight:'bold'}}>{EXPENSE}</Text></View>
-            <View><Text style={{color:color,fontWeight:'bold'}}>{convertToLocalString(handletotalCalculation(expenseData))}</Text></View>
+          {/* Display : EXPENSE                0.00 */}
+          <View style={styles.mainView}>
+            <View style={{flex:1}}><Text style={[styles.text,{color:color}]}>{EXPENSE}</Text></View>
+            <View><Text style={[styles.text,{color:color}]}>{convertToLocalString(handletotalCalculation(expenseData))}</Text></View>
           </View>
-          <View style={{borderWidth:0.6,borderColor:color,marginBottom:5}}/>
-          <View style={{flexDirection:'row',marginBottom:10}}>
+          {/* Display :________________________________ */}
+          <View style={[styles.border,{borderColor:color}]}/>
+          {/* Display : TOTAL                0.00 */}
+          <View style={[styles.mainView,{marginBottom:10}]}>
             <View style={{flex:1}}><Text style={{color:color,fontWeight:'900'}}>{TOTAL}</Text></View>
             <View><Text style={{color:color,fontWeight:'900'}}>{convertToLocalString(handletotalCalculation(incomeData)-handletotalCalculation(expenseData))}</Text></View>
           </View>
     </View>
   )
 }
+const styles=StyleSheet.create({
+  mainView:{flexDirection:'row',marginBottom:5},
+  text:{fontWeight:'bold'},
+  border:{borderWidth:0.6,marginBottom:5},
 
+})
 export default TotalIncomeExpenseComponent

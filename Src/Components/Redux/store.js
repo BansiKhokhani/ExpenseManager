@@ -21,4 +21,4 @@ export const store=configureStore({
  export const persistor = persistStore(store);
 
 
- // https://medium.com/@sisongqolosi/redux-persist-with-react-native-using-redux-toolkit-2908cbb9c870
+ 

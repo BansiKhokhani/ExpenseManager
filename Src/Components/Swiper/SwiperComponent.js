@@ -1,34 +1,8 @@
-import React, { Component } from 'react'
-import { View, Image, StatusBar, Dimensions } from 'react-native'
+import React from 'react'
+import { View, Image, StatusBar, Dimensions,StyleSheet } from 'react-native'
 import Swiper from 'react-native-swiper'
-const { width, height } = Dimensions.get('window')
+const { width:width, height:height } = Dimensions.get('window')
 
-const styles = {
-  wrapper: {
-    justifyContent:'center',
-    alignItem:'center',
-    alignContent:'center',
-    marginHorizontal:width/(6.5),
-  },
-
-  slide: {
-    marginTop:20,
-    justifyContent:'center',
-    alignItem:'center',
-    alignContent:'center'
-    
-  },
-  container: {
-    flex: 1,
-    justifyContent:'center',
-    alignItem:'center',
-    alignContent:'center'
-  },
- image: {
-   width:270,
-    height:600,
-  }
-}
 
 export default SwiperComponent=()=> {
   
@@ -38,26 +12,12 @@ export default SwiperComponent=()=> {
           style={styles.wrapper}
           dot={
             <View
-              style={{
-                backgroundColor: 'rgba(255,255,255,.3)',
-                width: 13,
-                height: 13,
-                borderRadius: 7,
-                marginLeft: 7,
-                marginRight: 7
-              }}
+              style={styles.dotView}
             />
           }
           activeDot={
             <View
-              style={{
-                backgroundColor: '#fff',
-                width: 13,
-                height: 13,
-                borderRadius: 7,
-                marginLeft: 7,
-                marginRight: 7
-              }}
+              style={styles.activeDotView}
             />
           }
           paginationStyle={{
@@ -87,3 +47,45 @@ export default SwiperComponent=()=> {
     )
   
 }
+const styles =  StyleSheet.create({
+  wrapper: {
+    justifyContent:'center',
+    alignItem:'center',
+    alignContent:'center',
+    marginHorizontal:width/(6.5),
+  },
+
+  slide: {
+    marginTop:20,
+    justifyContent:'center',
+    alignItem:'center',
+    alignContent:'center'
+    
+  },
+  container: {
+    flex: 1,
+    justifyContent:'center',
+    alignItem:'center',
+    alignContent:'center'
+  },
+  dotView:{
+    backgroundColor: 'rgba(255,255,255,.3)',
+    width: 13,
+    height: 13,
+    borderRadius: 7,
+    marginLeft: 7,
+    marginRight: 7
+  },
+  activeDotView:{
+    backgroundColor: '#fff',
+    width: 13,
+    height: 13,
+    borderRadius: 7,
+    marginLeft: 7,
+    marginRight: 7
+  },
+ image: {
+   width:width/1.4,
+    height:height/1.3,
+  }
+})

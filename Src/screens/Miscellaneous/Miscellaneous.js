@@ -4,8 +4,8 @@ import Colors from '../../Components/Colors'
 var RNFS = require('react-native-fs');
 import XLSX from 'xlsx';
 import Toast from 'react-native-simple-toast';
-import { indexOfMonth, objectOfYear, convertToNormalNumber, convertToLocalString,width,height } from './../../Components/Helper';
-import { useSelector} from 'react-redux';
+import { indexOfMonth, objectOfYear, convertToNormalNumber, convertToLocalString, width, height } from './../../Components/Helper';
+import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import SwiperComponent from '../../Components/Swiper/SwiperComponent';
 import { BannerAds, RewardedAds } from '../../Components/ads/Ads';
@@ -13,15 +13,16 @@ import { BannerAds, RewardedAds } from '../../Components/ads/Ads';
 
 const Miscellaneous = () => {
     const isFocused = useIsFocused();
-    const [isExportFile, setIsExportFile] = useState(false);
-    const [isHelp, setIsHelp] = useState(false);
-    const [isButtonShow, setIsButtonShow] = useState(true);           
-    const [yearData, setYearData] = useState();                     
-    const [selectedYear, setSelectedYear] = useState();             // selectedYear
-    const expenseData = useSelector(state => state.expenseReducer); // get and store expense data
-    const incomeData = useSelector(state => state.incomeReducer);   // get and store income data
+    const [isExportFile, setIsExportFile] = useState(false);         // show export excel file screen
+    const [isHelp, setIsHelp] = useState(false);                     // show help screen
+    const [isButtonShow, setIsButtonShow] = useState(true);          // show all buttons like Export, Help and Rate Us
+    const [yearData, setYearData] = useState();                      // store year data like 2014.....current year
+    const [selectedYear, setSelectedYear] = useState();              // selectedYear
+    const expenseData = useSelector(state => state.expenseReducer);  // get and store expense data
+    const incomeData = useSelector(state => state.incomeReducer);    // get and store income data
     const [stack, setstack] = useState([]);                          // set for the backbutton
 
+    //call on device backbutton press
     useEffect(() => {
         const backAction = () => {
             if (stack.length > 0) {
@@ -46,13 +47,15 @@ const Miscellaneous = () => {
 
     }, [stack]);
 
-
+    //called when screen isfocused
     useEffect(() => {
         setstack([])
         setIsButtonShow(true);
         setIsHelp(false);
         setIsExportFile(false);
     }, [isFocused]);
+
+    //call from ExcelFileOperation function
     const handleData = (month, expenseData, incomeData) => {
 
         const data = [['EXPENSE', expenseData], ['INCOME', incomeData]];
@@ -84,7 +87,6 @@ const Miscellaneous = () => {
                 finalIncomeData.push(['', `TOTAL INCOME`, convertToLocalString(total)], ['', 'TOTAL EXPENSE', convertToLocalString(totalExpense)], ['', 'BALANCE', `${total - totalExpense}`])
             }
         })
-
 
         return { finalExpenseData, finalIncomeData };
     }
@@ -187,9 +189,7 @@ const Miscellaneous = () => {
         }
     }
 
-
-
-
+    // handle rateUs 
     const handleRateUs = () => {
         const appPackageName = "com.bricks.wall.balls.shooter"; // Replace with your app's package name
         const playStoreUrl = `https://play.google.com/store/apps/details?id=${appPackageName}`;
@@ -197,43 +197,58 @@ const Miscellaneous = () => {
             .catch(err => console.error('An error occurred', err));
     };
 
-
+    // call when click on export button on main screen
+    const handleExportButtonPress = () => {
+        setIsExportFile(true);
+        setIsButtonShow(false);
+        setYearData(objectOfYear());
+        setstack(['Main Page']);
+    }
+    // call when click on help button on main screen
+    const handleHelpButtonPress=()=>{
+        setIsButtonShow(false);
+        setIsHelp(true);
+         setstack(['Main Page']);
+    }
     return (
         <View style={styles.mainView}>
             {/* add banner ads */}
             <BannerAds />
+            {/* main View */}
             <View style={styles.subView}>
+                {/* Display Export , help and RateUs button */}
                 {isButtonShow && <>
-                    <View style={{ position: 'absolute', top: 0, width: width, height: (height/4)}}>
+                    <View style={styles.adsView}>
                         <RewardedAds />
                     </View>
-                    <TouchableOpacity onPress={() => { setIsExportFile(true), setIsButtonShow(false), setYearData(objectOfYear()), setstack(['Main Page']) }} style={styles.button}>
+                    <TouchableOpacity onPress={handleExportButtonPress} style={styles.button}>
                         <Text style={styles.text}>Export Excel</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { setIsButtonShow(false), setIsHelp(true), setstack(['Main Page']) }} style={styles.button}>
+                    <TouchableOpacity onPress={handleHelpButtonPress} style={styles.button}>
                         <Text style={styles.text}> Help</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleRateUs} style={styles.button}>
                         <Text style={styles.text}> Rate Us</Text>
                     </TouchableOpacity>
-                    <View style={{ position: 'absolute', bottom: 0,width: width, height: (height/4)}}>
+                    <View style={styles.adsView}>
                         <RewardedAds />
                     </View>
                 </>}
+                {/* Display Subscreen of the export to download the excel file */}
                 {isExportFile &&
                     <>
-                        <View style={{ position: 'absolute', top: 0, width: width, height: (height/4) }}>
+                        <View style={styles.adsView}>
                             <RewardedAds />
                         </View>
-                        <Text style={{ color: Colors.whitetextcolor, fontWeight: 'bold', fontSize: 20 }}>SELECT YEAR:</Text>
-                        <View style={{ flex: 0.3, width: '40%' }}>
+                        <Text style={styles.selectYearText}>SELECT YEAR:</Text>
+                        <View style={styles.exportFileView}>
                             <FlatList
                                 data={yearData}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity activeOpacity={1} onPress={() => { setSelectedYear(item.year) }}>
 
                                         <Text style={[(selectedYear == item.year ? styles.selectedYearText : styles.unSelectedYearText)]}>{item.year}</Text>
-                                        <View style={{ borderWidth: 0.2, borderColor: '#ffff', width: '100%' }} />
+                                        <View style={styles.borderline} />
                                     </TouchableOpacity>
                                 )}
                                 showsVerticalScrollIndicator={false}
@@ -242,11 +257,12 @@ const Miscellaneous = () => {
                         <TouchableOpacity onPress={() => { !selectedYear ? Toast.show(`Select the year!`, Toast.SHORT) : SaveDataToExcel() }} style={styles.button}>
                             <Text style={styles.text}> Export</Text>
                         </TouchableOpacity>
-                        <View style={{ position: 'absolute', bottom: 0, width: width, height: (height/4)}}>
+                        <View style={styles.adsView}>
                             <RewardedAds />
                         </View>
                     </>
                 }
+                {/* help subscreen */}
                 {isHelp &&
                     <SwiperComponent />
                 }
@@ -267,6 +283,10 @@ const styles = StyleSheet.create({
         flex: 1,
 
     },
+    adsView: { position: 'absolute', top: 0, width: width, height: (height / 4) },
+    selectYearText:{ color: Colors.whitetextcolor, fontWeight: 'bold', fontSize: 20 },
+    exportFileView:{ flex: 0.3, width: '40%' },
+    borderline:{ borderWidth: 0.2, borderColor: '#ffff', width: '100%' },
     button: {
         width: '50%',
         paddingVertical: 10,

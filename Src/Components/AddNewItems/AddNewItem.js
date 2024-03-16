@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Button, SafeAreaView, StyleSheet, Modal, View, TextInput, Dimensions, StatusBar, Text, TouchableOpacity, Keyboard } from 'react-native'
+import { StyleSheet, Modal, View, TextInput, Dimensions,  Text, TouchableOpacity} from 'react-native'
 import Colors from '../Colors';
 import Toast from 'react-native-simple-toast';
 import { convertToNormalNumberString, generateUniqueId } from '../Helper';
@@ -10,22 +10,24 @@ const { width } = Dimensions.get("window");
 const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
     const textInputDetailRef = useRef(null);
     const textInputPriceRef = useRef(null);
-    const [isModalVisible, setModalVisible] = useState(true);
-    const [inputDetail, setinputDetail] = useState("");
-    const [inputPrice, setinputPrice] = useState("");
+    const [isModalVisible, setModalVisible] = useState(true);    // show the model or popup to add new product
+    const [inputDetail, setinputDetail] = useState("");          // inputDetail 
+    const [inputPrice, setinputPrice] = useState("");            // price
 
+    // call on editData update
     useEffect(() => {
         if (itemType === EDIT) {
             setinputDetail(editData?.inputDetail);
-            setinputPrice(convertToNormalNumberString(editData?.inputPrice));//hello
+            setinputPrice(convertToNormalNumberString(editData?.inputPrice));
         }
     }, [editData])
 
+    // call on cancel button
     const toggleModalVisibility = () => {
         setModalVisible(!isModalVisible),
             isShowCustomComponent(!isModalVisible)
     }
-
+    // call on ADD or EDIT button
     const sendDataToParent = () => {
         if (inputDetail.length<=0 && inputPrice.length<=0) {
             Toast.show('Please Enter the Detail and Price.', Toast.LONG);
@@ -45,7 +47,7 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
             let uniqueId = null;
             itemType == ADD ? uniqueId = generateUniqueId() : (uniqueId = editData?.uniqueId);
             const data = { inputDetail, inputPrice, uniqueId };
-            onData(data);
+            onData(data);  // set data for the parent infomation
             setinputDetail("");
             setinputPrice("");
             textInputDetailRef.current.focus();

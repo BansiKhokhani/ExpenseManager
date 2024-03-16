@@ -14,6 +14,7 @@ const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'Jul
 export const monthOfYear = monthNames[month-1];
 const numberOfDaysInMonth={January:31,February:28,March:31,April:30,May:31,June:30,July:31,August:31,September:30,October:31,November:30,December:31};
 
+// return index of the given month
 export const indexOfMonth=(monthName)=>{
     for(i=0;i<12;i++)
     {
@@ -22,12 +23,17 @@ export const indexOfMonth=(monthName)=>{
         
     }
 }
+//return month name of given month number
 export const monthnameOfYear=(month)=>{
     return monthNames[month];
 }
+
+// return day name of the given day number
 export const daynameOfWeek=(day)=>{
     return dayOfWeekNames[day];
 }
+
+// return index of the given day
 export const indexOfDay=(dayName)=>
 {
     for(i=0;i<7;i++)
@@ -36,6 +42,8 @@ export const indexOfDay=(dayName)=>
                 return i;
     }
 }
+
+// return total number of days of the month (i.e, jan have 31 day and april have 30 days)
 export const daysOfMonth=(month,year)=>
 {
     if(month=='February')

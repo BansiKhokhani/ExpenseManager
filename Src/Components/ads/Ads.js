@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TouchableOpacity,View } from 'react-native';
 import { RewardedAd, RewardedAdEventType, TestIds, BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
-import Colors from '../Colors';
-
 
 const RewardedAdUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyyyyyy';
 const bannerAdUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-8955881905609463/6363795382';  //banner ads
@@ -10,6 +8,7 @@ const rewarded = RewardedAd.createForAdRequest(RewardedAdUnitId, {
   keywords: ['fashion', 'clothing'],
 });
 
+// Rewarded ads...........................
 export const RewardedAds=()=>{
   const [loaded, setLoaded] = useState(false);
 
@@ -47,7 +46,7 @@ export const RewardedAds=()=>{
   );
 }
 
-
+// Banner Ads....................................
 export const BannerAds=()=>{
     return (
         <View >

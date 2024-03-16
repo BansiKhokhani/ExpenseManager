@@ -10,12 +10,13 @@ import { updateselected_Date_Month_Year } from '../Redux/Action';
 
 export default function Header({ page, isIncomeExpense }) {
   const dispatch = useDispatch();
-  const initialData = useSelector(state => state.selectedDateMonthYearReducer);  //get data from redux
-  const expenseData = useSelector(state => state.expenseReducer);
-  const incomeData = useSelector(state => state.incomeReducer);
-  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);   //value= 'income or 'expense
-  const [allData, setAllData] = useState(initialData);  // set redux data
   const isFocused = useIsFocused();
+  const initialData = useSelector(state => state.selectedDateMonthYearReducer);  //get data from redux
+  const expenseData = useSelector(state => state.expenseReducer);                // get expensedata
+  const incomeData = useSelector(state => state.incomeReducer);                  // get incomedata
+  const [isIncomeOrExpense, setIsIncomeOrExpense] = useState(EXPENSE);           //value= 'income or 'expense
+  const [allData, setAllData] = useState(initialData);                           // set redux data
+  
   // dispatch data 
   const handleDispatch = (selectedDate, selectedDay, selectedMonth, selectedYear) => {
     dispatch(updateselected_Date_Month_Year(selectedDate, selectedDay, selectedMonth, selectedYear))
@@ -49,18 +50,19 @@ export default function Header({ page, isIncomeExpense }) {
     const nextDayIndex = (indexOfDay(allData?.selectedDay) + 1) % 7;
     const nextDayNameOfWeek = daynameOfWeek(nextDayIndex);
 
+    // set data on redux
     const setAndNotifyAllData = (data) => {
-
       setAllData(data);
       handleDispatch(data.selectedDate, data.selectedDay, data.selectedMonth, data.selectedYear)
     }
 
+    // for the next year
     const nextYear = () => {
       if ((allData?.selectedYear + 1) <= year) // not go forward if the selected year is same as the current year
         setAndNotifyAllData({ ...allData, selectedYear: (allData?.selectedYear + 1) });
     }
 
-
+    // for the next year and month
     const nextYear_Month = () => {
       if (nextMonthIndex >= 12)
         setAndNotifyAllData({ ...allData, selectedMonth: 'January', selectedYear: (allData?.selectedYear + 1) });
@@ -74,6 +76,7 @@ export default function Header({ page, isIncomeExpense }) {
       }
     }
 
+    // for the next year, month and day
     const nextYear_Month_Day = () => {
       if (allData?.selectedYear == year) {
         if (nextMonthIndex == month) {
@@ -97,12 +100,12 @@ export default function Header({ page, isIncomeExpense }) {
       else
         setAndNotifyAllData({ ...allData, selectedDate: (allData?.selectedDate + 1), selectedDay: nextDayNameOfWeek });
     }
-
-    if (page == CALENDER_YEAR || page == REPORT_CALENDER_YEAR)
+    // Start from here
+    if (page == CALENDER_YEAR || page == REPORT_CALENDER_YEAR)  // change only next year 
       nextYear();
-    else if (page == CALENDER_YEAR_MONTH || page == REPORT_CALENDER_YEAR_MONTH)
+    else if (page == CALENDER_YEAR_MONTH || page == REPORT_CALENDER_YEAR_MONTH)  // change next year and month
       nextYear_Month();
-    else
+    else                                        // change next year, month and day
       nextYear_Month_Day();
 
   }
@@ -154,7 +157,7 @@ export default function Header({ page, isIncomeExpense }) {
         setAndNotifyAllData({ ...allData, selectedDate: allData?.selectedDate - 1, selectedDay: previousDay })
     }
 
-
+    // Start from here
     if (page === CALENDER_YEAR || page === REPORT_CALENDER_YEAR)  // change only year back
       previousYear();
     else if (page === CALENDER_YEAR_MONTH || page === REPORT_CALENDER_YEAR_MONTH)   //change year, month back
@@ -164,12 +167,14 @@ export default function Header({ page, isIncomeExpense }) {
 
   }
 
-
+// call on expense or income mode
   const selectType = (value) => {
     setIsIncomeOrExpense(value);
     isIncomeExpense(value);
   }
 
+
+  // handle total calculation of exppense and income
   const handletotalCalculation = (incomeExpenseData) => {
     let totalexpense = 0;
     if (page == TODAY || page === CALENDER_YEAR_MONTH_DAY) {
@@ -194,9 +199,7 @@ export default function Header({ page, isIncomeExpense }) {
             totalexpense += convertToNormalNumber(item?.inputPrice);
           })
         }
-
       }
-
     }
     return convertToLocalString(totalexpense);
   }
