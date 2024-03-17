@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { TouchableOpacity,View } from 'react-native';
 import { RewardedAd, RewardedAdEventType, TestIds, BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 
-const RewardedAdUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyyyyyy';
-const bannerAdUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-8955881905609463/6363795382';  //banner ads
+const RewardedAdUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-3791007458121855/9384919829';
+const bannerAdUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-3791007458121855/5605456919';  //banner ads
 const rewarded = RewardedAd.createForAdRequest(RewardedAdUnitId, {
   keywords: ['fashion', 'clothing'],
 });

@@ -56,9 +56,9 @@ export default function Calender({ route }) {
         setstack(newStack);
         return true //return false when finally need to close app
       }
-      else 
+      else
         return false;
-      
+
     };
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -80,10 +80,10 @@ export default function Calender({ route }) {
 
   //called when screen isfocused
   useEffect(() => {
-    if (route?.params?.isFromReport==='Report Page') {
-      setstack([CALENDER_YEAR,CALENDER_YEAR_MONTH]) 
-        setSelectedPageMode(CALENDER_YEAR_MONTH_DAY);
-        route.params.isFromReport='';
+    if (route?.params?.isFromReport === 'Report Page') {
+      setstack([CALENDER_YEAR, CALENDER_YEAR_MONTH])
+      setSelectedPageMode(CALENDER_YEAR_MONTH_DAY);
+      route.params.isFromReport = '';
     }
     else {
       setstack([])
@@ -98,13 +98,13 @@ export default function Calender({ route }) {
     setNumberOfDaysOfMonth(daysOfMonthData(initialdata.selectedMonth, initialdata.selectedYear))
   }, [initialdata])
 
- 
+
   // Used to call this function AddButtonComponent pressed 
   const handleButtonPress = (value) => {
     setShowCustomComponent(value)
   }
 
-// Add or Edit the income or expense data in redux from here
+  // Add or Edit the income or expense data in redux from here
   const handleChildData = (value) => {
     const inputPrice = convertToLocalString(value?.inputPrice);
     const details = { inputDetail: value.inputDetail, inputPrice: inputPrice, uniqueId: value.uniqueId };
@@ -129,28 +129,29 @@ export default function Calender({ route }) {
 
 
   const renderMonthComponent = ({ item }) => (
-    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => {setSelectedPageMode(CALENDER_YEAR_MONTH), stack.length < 2 && setstack([...stack, CALENDER_YEAR]) }} />
+    <MonthComponent page={selectedPageMode} monthName={item.monthName} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setSelectedPageMode(CALENDER_YEAR_MONTH), stack.length < 2 && setstack([...stack, CALENDER_YEAR]) }} />
   );
   const renderDaysComponent = ({ item }) => (
-    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => {  setSelectedPageMode(CALENDER_YEAR_MONTH_DAY), stack.length < 2 && setstack([...stack, CALENDER_YEAR_MONTH]) }} />
+    <DaysComponent page={selectedPageMode} item={item} isIncomeOrExpense={isIncomeOrExpense} isPress={(value) => { setSelectedPageMode(CALENDER_YEAR_MONTH_DAY), stack.length < 2 && setstack([...stack, CALENDER_YEAR_MONTH]) }} />
   );
 
   return (
     <View style={styles.wrapper}>
       {/* header component */}
-      <Header page={selectedPageMode} isIncomeExpense={(value) => { setIsIncomeOrExpense(value) }}></Header>  
+      <Header page={selectedPageMode} isIncomeExpense={(value) => { setIsIncomeOrExpense(value) ,flatListRef.current?.scrollToOffset({ offset: 0, animated: true })}}></Header>
       {/*  display months on CALENDER_YEAR page mode*/}
       {selectedPageMode == CALENDER_YEAR &&
         <View style={styles.mainView}>
           <FlatList
+            ref={flatListRef}
             data={selectedYear == year ? monthData.slice(0, month) : monthData.slice(0, 12)}
             renderItem={renderMonthComponent}
             numColumns={2}
             showsVerticalScrollIndicator={false}
           />
         </View>}
-        {/*  display days of month on CALENDER_YEAR_MONTH page mode*/}
-      {selectedPageMode==CALENDER_YEAR_MONTH &&
+      {/*  display days of month on CALENDER_YEAR_MONTH page mode*/}
+      {selectedPageMode == CALENDER_YEAR_MONTH &&
         <View style={styles.mainView}>
           <FlatList
             ref={flatListRef}
@@ -159,8 +160,8 @@ export default function Calender({ route }) {
             showsVerticalScrollIndicator={false}
           />
         </View>}
-        {/* display products on  CALENDER_YEAR_MONTH_DAY page mode*/}
-      {selectedPageMode==CALENDER_YEAR_MONTH_DAY &&
+      {/* display products on  CALENDER_YEAR_MONTH_DAY page mode*/}
+      {selectedPageMode == CALENDER_YEAR_MONTH_DAY &&
         <View style={{ flex: 1 }}>
           {
             showCustomComponent && (
@@ -182,8 +183,8 @@ export default function Calender({ route }) {
   )
 }
 const styles = StyleSheet.create({
-  wrapper:{ flex: 1, backgroundColor: Colors.pageBackgroundColor },
-  mainView:{
+  wrapper: { flex: 1, backgroundColor: Colors.pageBackgroundColor },
+  mainView: {
     flex: 1, marginTop: 5
   },
   container: {
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 50,
   },
-  productFlatlist:{
+  productFlatlist: {
     flex: 1, marginTop: 5
   }
 })
