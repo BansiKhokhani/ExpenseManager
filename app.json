@@ -1,6 +1,6 @@
 {
-  "name": "ExpenseManager",
-  "displayName": "ExpenseManager",
+  "name": "Expense Manager: Easy",
+  "displayName": "Expense Manager: Easy",
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-3791007458121855~3390357113"
   }
