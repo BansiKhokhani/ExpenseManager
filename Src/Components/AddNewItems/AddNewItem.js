@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { StyleSheet, Modal, View, TextInput, Dimensions,  Text, TouchableOpacity} from 'react-native'
+import { StyleSheet, Modal, View, TextInput, Dimensions, Text, TouchableOpacity } from 'react-native'
 import Colors from '../Colors';
 import Toast from 'react-native-simple-toast';
 import { convertToNormalNumberString, generateUniqueId } from '../Helper';
@@ -29,7 +29,7 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
     }
     // call on ADD or EDIT button
     const sendDataToParent = () => {
-        if (inputDetail.length<=0 && inputPrice.length<=0) {
+        if (inputDetail.length <= 0 && inputPrice.length <= 0) {
             Toast.show('Please Enter the Detail and Price.', Toast.LONG);
             textInputDetailRef.current.focus();
         }
@@ -37,7 +37,7 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
             Toast.show('Please Enter the Detail.');
             textInputDetailRef.current.focus();
         }
-        else if (inputPrice.length<=0) {
+        else if (inputPrice.length <= 0) {
             Toast.show('Please Enter the price.');
             textInputPriceRef.current.focus();
         }
@@ -46,7 +46,10 @@ const AddNewItem = ({ isShowCustomComponent, itemType, onData, editData }) => {
             Toast.show(itemType == ADD ? 'Added!' : 'Edited!');
             let uniqueId = null;
             itemType == ADD ? uniqueId = generateUniqueId() : (uniqueId = editData?.uniqueId);
-            const data = { inputDetail, inputPrice, uniqueId };
+            let detail=inputDetail;
+            if (inputDetail.length > 20)
+                detail=inputDetail.slice(0, 20) + '...';
+            const data = { inputDetail:detail, inputPrice, uniqueId };
             onData(data);  // set data for the parent infomation
             setinputDetail("");
             setinputPrice("");

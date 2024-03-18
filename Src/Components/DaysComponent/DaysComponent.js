@@ -96,6 +96,6 @@ dateView:{ flex: 1, flexDirection: 'row' },
 calendarYearMonthLine:{ flex: 1, borderWidth: 0.3, borderColor: 'white', marginTop: 10 },
 text:{ textAlign: 'right', color: Colors.whitetextcolor},
 reportCalanderYearMonthMainView:{ flexDirection: 'row', marginVertical: 10 },
-reportCalanderYearMonthBorder:{ borderWidth: 0.2, borderColor: Colors.whitetextcolor },
+reportCalanderYearMonthBorder:{ flex:1,borderWidth: 0.2, borderColor: Colors.whitetextcolor },
 })
 export default DaysComponent;

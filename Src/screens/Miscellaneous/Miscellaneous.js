@@ -191,7 +191,7 @@ const Miscellaneous = () => {
 
     // handle rateUs 
     const handleRateUs = () => {
-        const appPackageName = "com.bricks.wall.balls.shooter"; // Replace with your app's package name
+        const appPackageName = "com.harekrishna.expensemanager"; // Replace with your app's package name
         const playStoreUrl = `https://play.google.com/store/apps/details?id=${appPackageName}`;
         Linking.openURL(playStoreUrl)
             .catch(err => console.error('An error occurred', err));

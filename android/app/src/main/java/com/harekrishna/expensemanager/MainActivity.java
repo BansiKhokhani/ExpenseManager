@@ -1,4 +1,4 @@
-package com.expensemanager;
+package com.harekrishna.expensemanager;
 import android.os.Bundle; 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

@@ -74,7 +74,7 @@ const MonthComponent = ({ page, monthName, isIncomeOrExpense, isPress }) => {
   )
 }
 const styles=StyleSheet.create({
-calanderTouchableOpacity:{ backgroundColor: Colors.whitetextcolor, paddingHorizontal: 10, paddingTop: 10, width: '45%', borderRadius: 5, margin: 10 },
+calanderTouchableOpacity:{ backgroundColor: Colors.whitetextcolor, paddingHorizontal: 10, paddingTop: 10, width: '45%', borderRadius: 5, marginVertical: 10},
 calendarYearView:{ backgroundColor: Colors.topBottomBarcolor, alignItems: 'center', padding: 10, borderRadius: 5 },
 monthNameText:{ color: Colors.whitetextcolor, fontWeight: 'bold', fontSize: 20 },
 amountText:{ color: Colors.textcolor, textAlign: 'center', paddingVertical: 5, fontWeight: 'bold' },

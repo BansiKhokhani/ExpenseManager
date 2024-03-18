@@ -43,6 +43,7 @@ export default  Today=() =>{
   // Add or Edit the income or expense data in redux from here
   const handleChildData = (value) => {
     const inputPrice = convertToLocalString(value?.inputPrice); 
+    console.log(value?.inputDetail)
     const details = { inputDetail: value.inputDetail, inputPrice: inputPrice, uniqueId: value.uniqueId }; 
     if (isIncomeOrExpense == EXPENSE) {
       if (editData == null)

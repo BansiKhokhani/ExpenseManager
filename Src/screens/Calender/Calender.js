@@ -148,6 +148,8 @@ export default function Calender({ route }) {
             renderItem={renderMonthComponent}
             numColumns={2}
             showsVerticalScrollIndicator={false}
+            columnWrapperStyle={{  flex: 1,justifyContent: "space-around"}}
+            
           />
         </View>}
       {/*  display days of month on CALENDER_YEAR_MONTH page mode*/}
@@ -185,7 +187,7 @@ export default function Calender({ route }) {
 const styles = StyleSheet.create({
   wrapper: { flex: 1, backgroundColor: Colors.pageBackgroundColor },
   mainView: {
-    flex: 1, marginTop: 5
+    marginTop: 5,flex:1
   },
   container: {
     flex: 1,
