@@ -26,6 +26,7 @@ export default SwiperComponent=()=> {
           loop={false}
         >
           <View style={styles.slide}>
+            <Text style={styles.titleText}>Add and Delete Item</Text>
             <Image
               style={styles.image}
               source={require('../../../assets/Images/IncomeExpenseImg_1.png')}
@@ -33,6 +34,7 @@ export default SwiperComponent=()=> {
             />
           </View>
           <View style={styles.slide}>
+          <Text style={styles.titleText}>Edit Item</Text>
             <Image
               style={styles.image}
               source={require('../../../assets/Images/IncomeExpenseImg_2.png')}
@@ -40,6 +42,7 @@ export default SwiperComponent=()=> {
             />
           </View>
           <View style={styles.slide}>
+          <Text style={styles.titleText}>Download Excel(.xlsx) File</Text>
             <Image style={styles.image} source={require('../../../assets/Images/IncomeExpenseImg_3.png')} />
           </View>
         </Swiper>
@@ -87,5 +90,6 @@ const styles =  StyleSheet.create({
  image: {
    width:width/1.4,
     height:height/1.3,
-  }
+  },
+  titleText:{textAlign: 'left',fontSize:22, color: Colors.whitetextcolor,fontWeight: 'bold'}
 })

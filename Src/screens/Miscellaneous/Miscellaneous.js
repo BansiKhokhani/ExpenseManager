@@ -221,6 +221,7 @@ const Miscellaneous = () => {
                     <View style={styles.adsView}>
                         <RewardedAds />
                     </View>
+                    <Text style={styles.titleText}>Miscellaneous</Text>
                     <TouchableOpacity onPress={handleExportButtonPress} style={styles.button}>
                         <Text style={styles.text}>Export Excel</Text>
                     </TouchableOpacity>
@@ -240,6 +241,7 @@ const Miscellaneous = () => {
                         <View style={styles.adsView}>
                             <RewardedAds />
                         </View>
+                        <Text style={styles.unSelectedYearText}>File .xlsx can be found in your local storage</Text>
                         <Text style={styles.selectYearText}>SELECT YEAR:</Text>
                         <View style={styles.exportFileView}>
                             <FlatList
@@ -301,6 +303,7 @@ const styles = StyleSheet.create({
     text: { textAlign: 'center', color: Colors.whitetextcolor, fontWeight: 'bold' },
     unSelectedYearText: { textAlign: 'center', paddingVertical: 10, color: Colors.whitetextcolor, fontWeight: 'bold' },
     selectedYearText: { textAlign: 'center', paddingVertical: 10, color: Colors.textcolor, backgroundColor: Colors.whitetextcolor, fontWeight: 'bold' },
+    titleText:{textAlign: 'center',fontSize:22, color: Colors.whitetextcolor,fontWeight: 'bold'}
 })
 export default Miscellaneous;
 
