@@ -91,7 +91,7 @@ export default function Header({ page, isIncomeExpense }) {
     }
     // child function
     const handleMonthsLastDay = () => {
-      if (daysOfMonth(allData?.selectedMonth, allData?.selectedDate) == allData?.selectedDate) {
+      if (daysOfMonth(allData?.selectedMonth, allData?.selectedYear) == allData?.selectedDate) {
         if (allData?.selectedMonth == 'December')
           setAndNotifyAllData({ ...allData, selectedDate: 1, selectedDay: nextDayNameOfWeek, selectedMonth: 'January', selectedYear: allData?.selectedYear + 1 });
         else
